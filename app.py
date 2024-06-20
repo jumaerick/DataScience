@@ -6,7 +6,7 @@ from explore import explorer
 st.title('Iris Exploration and Prediction')
 
 option = st.selectbox('Explore or Prediction Task',
-                    ('', 'Explore', 'Predict'))
+                    ('Select Task', 'Explore', 'Predict'))
 
 
 def main(item):
