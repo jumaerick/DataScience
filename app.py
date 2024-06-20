@@ -17,7 +17,7 @@ def main(item):
     if item == "explore":
         st.title('Sample data statistics')
         # st.dataframe(explorer.dataLoader())
-        explorer.getSummaries()
+        #explorer.getSummaries()
         st.title('Sample data distribution')
         explorer.getClassDistribution()
         pass
