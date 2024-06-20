@@ -5,17 +5,17 @@ from explore import explorer
 
 st.title('Iris Dataset Exploration and Prediction')
 
-option = st.selectbox('Make a selection',
+option = st.selectbox('',
                     ('Select option', 'Explore', 'Predict'))
 
 
 def main(item):
     item = item.lower()
     if item == "explore":
-        st.title('Sample data statistics')
+        #st.title('Sample data statistics')
         # st.dataframe(explorer.dataLoader())
         #explorer.getSummaries()
-        st.title('Sample data distribution')
+        st.title('Bivariant Analysis')
         explorer.getClassDistribution()
         pass
     elif item == 'predict':
