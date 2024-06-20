@@ -32,8 +32,8 @@ def getClassDistribution(data = df):
         plt.ylabel(y)
     st.pyplot(plt)
     st.markdown("""
-    The sepals measurements nicely segregate the data to 3 visible classes.
+    The sepals measurements segregate the data to 3 visible clusters with a few points overlapping.
     """)
     st.markdown("""
-   The petals measurements alone results in 1 visible cluster while the other two clusters overlap.
+   The petals measurements alone results in overlapping clusters.
     """)
