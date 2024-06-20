@@ -2,6 +2,7 @@ from modules.commonModules import *
 import tensorflow as tf
 from keras.models import load_model
 from keras.saving import register_keras_serializable
+from keras.models import Sequential
 import keras
 
 
@@ -16,6 +17,10 @@ def get_data():
     dsw = lambda x :d_s[x]
     df['species'] = [dsw(i) for i in df['class']]
     return df
+
+def getIrisRaw():
+    iris = load_iris()
+    return iris
 
 df = get_data()
 
@@ -74,23 +79,52 @@ def featureSlider(item):
     return X_scaled
 
 
-@register_keras_serializable()
-class IrisModel(keras.Model):
-    def __init__(self):
-        super(IrisModel, self).__init__()
-        self.flattenLayer = keras.layers.Flatten()
-        self.denseOne = keras.layers.Dense(units = 20, activation='relu')
-        self.denseTwo = keras.layers.Dense(3, activation = 'softmax')
+# @register_keras_serializable()
+# class IrisModel(keras.Model):
+#     def __init__(self):
+#         super(IrisModel, self).__init__()
+#         self.flattenLayer = keras.layers.Flatten()
+#         self.denseOne = keras.layers.Dense(units = 20, activation='relu')
+#         self.denseTwo = keras.layers.Dense(3, activation = 'softmax')
 
-    @tf.function
-    def call(self, x):
-        x = self.flattenLayer(x)
-        x = self.denseOne(x)
-        x = self.denseTwo(x)
-        return x
+#     # @tf.function
+#     def call(self, x):
+#         x = self.flattenLayer(x)
+#         x = self.denseOne(x)
+#         x = self.denseTwo(x)
+#         return x
     
 
-model = load_model('./mlModels/model.keras', custom_objects={'IrisModel': IrisModel})
+class DataLoader:
+  def __init__(self):
+    self.data = getIrisRaw().data
+    self.target = getIrisRaw().target
+
+  def splitData(self):
+    (train_data, test_data, train_labels, test_labels) = train_test_split(self.data, self.target, test_size = 0.2, random_state = 0)
+    return {'train_data' : train_data, 'test_data' : test_data, 'train_labels': train_labels, 'test_labels' : test_labels}
+  
+def trainModel():
+
+    dataLoader = DataLoader()
+    loadedData = dataLoader.splitData()
+
+    model = Sequential()
+    model.add(keras.layers.Flatten())
+    model.add(keras.layers.Dense(units = 20, activation='relu'))
+    model.add(keras.layers.Dense(3, activation = 'softmax'))
+    model.compile(optimizer = 'adam', loss='sparse_categorical_crossentropy', metrics = ['accuracy'])
+    model.fit(loadedData['train_data'], loadedData['train_labels'], batch_size = 10, epochs = 50,
+        validation_data=[loadedData['test_data'], loadedData['test_labels']], validation_batch_size = 5)
+    
+    print(f"Test Accuracy: %.2f"%(model.evaluate(loadedData['test_data'], loadedData['test_labels']))[-1])
+    print(f"Train Accuracy: %.2f"%(model.evaluate(loadedData['train_data'], loadedData['train_labels']))[-1])
+    model.save("./mlModels/model.keras")
+    pass
+
+
+# model = load_model('./mlModels/model.keras', custom_objects={'IrisModel': IrisModel})
+model = load_model('./mlModels/model.keras')
 # Make predictions
 model.compile(optimizer = 'adam', loss='sparse_categorical_crossentropy', metrics = ['accuracy'])
 
@@ -100,10 +134,7 @@ def makePrediction(payload):
     'Species': ['Virginica', 'Versicolor', 'Setosa'],
     'Confidence': y_pred.flatten()
 })
-
     # st.dataframe(df_pred)
     fig = plt.figure()
     sns.barplot(x = 'Species', y='Confidence', data = df_pred, hue='Species')
     st.pyplot(plt)
-
-
