@@ -3,10 +3,10 @@ from predict import predictor
 from explore import explorer
 
 
-st.title('Iris Dataset Exploration and Prediction')
+st.title('Iris Exploration and Prediction')
 
-option = st.selectbox('',
-                    ('Select option', 'Explore', 'Predict'))
+option = st.selectbox('Explore or Prediction Task',
+                    ('', 'Explore', 'Predict'))
 
 
 def main(item):
