@@ -3,10 +3,7 @@ from predict import predictor
 from explore import explorer
 
 
-st.title('Test app')
-st.markdown("""
-Sample prediction tasks
-""")
+st.title('Iris Dataset Exploration and Prediction')
 
 option = st.selectbox('Make a selection',
                     ('Select option', 'Explore', 'Predict'))
