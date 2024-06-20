@@ -35,5 +35,5 @@ def getClassDistribution(data = df):
     The sepals measurements segregate the data to 3 visible clusters with a few points overlapping.
     """)
     st.markdown("""
-   The petals measurements alone results in overlapping clusters.
+   The petals measurements alone results in 1 distinct cluster and 2 overlapping clusters.
     """)
