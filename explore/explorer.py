@@ -40,7 +40,7 @@ def distributions():
         option = 'month'
         
     fig = plt.figure(figsize=(12, 6))
-    sns.boxplot(x = option, y = 'value (million $)', data = dataset)
+    sns.boxplot(x = 'day', y = 'value (million $)', data = dataset)
     st.pyplot(plt)
 
 
