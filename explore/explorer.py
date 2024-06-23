@@ -1,9 +1,4 @@
-from loadData import dataLoader
-import streamlit as st
-import seaborn as sns
-import pandas as pd
-import matplotlib.pyplot as plt
-from datetime import timedelta
+from commonLibraries.libraries import *
 
 dataset = dataLoader.getData()
 
@@ -40,7 +35,8 @@ def distributions():
         option = 'month'
         
     fig = plt.figure(figsize=(12, 6))
-    sns.boxplot(x = 'day', y = 'value (million $)', data = dataset)
+    sns.boxplot(x = option, y = 'value (million $)', data = dataset)
     st.pyplot(plt)
+    
 
 
