@@ -16,7 +16,5 @@ def main(item):
     else:
         pass
 
-    # st.dataframe(dataset.set_index('date'))
-
 if __name__ == '__main__':
     main(item = option)
