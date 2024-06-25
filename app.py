@@ -24,7 +24,6 @@ def main(item):
         decompose.rollingMeanStd()
 
     elif item == 'stationarity test and differencing':
-        st.text('hapa')
         decompose.stationarityTest()
     else:
         pass
