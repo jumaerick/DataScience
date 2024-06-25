@@ -23,7 +23,7 @@ def main(item):
         st.subheader('The changing mean and variation in the data at a specific window')
         decompose.rollingMeanStd()
 
-    elif item == 'stationarity test':
+    elif item == 'stationarity test and differencing':
         decompose.stationarityTest()
     else:
         pass
