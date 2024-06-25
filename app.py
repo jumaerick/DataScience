@@ -10,7 +10,6 @@ def main(item):
     if item == 'explore':
         explorer.distributions()
     elif item == 'decompose':
-        # decompose.autoCorrelation()
         st.markdown('Decomposing the time series to its components')
         decompose.seasonalComponentPlot()
         st.markdown('The time series exhibits seasonality since peaks and troughs occur annualy')
@@ -25,7 +24,6 @@ def main(item):
         decompose.rollingMeanStd()
 
     elif item == 'stationarity test':
-        # st.markdown('Stationarity Test')
         decompose.stationarityTest()
     else:
         pass
