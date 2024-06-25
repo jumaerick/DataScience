@@ -11,7 +11,6 @@ def autoCorrelation():
     pd.plotting.autocorrelation_plot(dataset.iloc[:, :2])
     st.pyplot(plt)
 
-
 def seasonalComponentPlot():
     fig = plt.figure()
     sns.set(rc={'figure.figsize':(10,5)})
@@ -19,14 +18,12 @@ def seasonalComponentPlot():
     plt.title('The seasonal component of the timeseries')
     st.pyplot(plt)
 
-
 def residualComponentPlot():
     fig = plt.figure()
     sns.set(rc={'figure.figsize':(10,5)})
     sns.lineplot(results.resid)
     plt.title('The residual component of the timeseries')
     st.pyplot(plt)
-
 
 def trendComponentPlot():
     fig = plt.figure()
