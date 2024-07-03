@@ -3,7 +3,6 @@ from explore import explorer
 from explore import decompose
 
 st.title('Time Series Analysis')
-option = st.sidebar.selectbox('Select a task', ('Explore','Decompose','Stationarity Test', 'Forecasting'))
 option = st.sidebar.selectbox('Select a task', ('Explore','Decompose','Stationarity Test and Differencing', 'Forecasting'))
 
 def main(item):
