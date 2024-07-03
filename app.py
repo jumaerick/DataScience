@@ -1,6 +1,7 @@
 import streamlit as st
 from explore import explorer
 from explore import decompose
+from explore import forecast
 
 st.title('Time Series Analysis')
 option = st.sidebar.selectbox('Select a task', ('Explore','Decompose','Stationarity Test and Differencing', 'Forecasting'))
@@ -26,7 +27,7 @@ def main(item):
     elif item == 'stationarity test and differencing':
         decompose.stationarityTest()
     else:
-        pass
+        forecast.seriesComponents()
 
 if __name__ == '__main__':
     main(item = option)

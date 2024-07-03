@@ -76,11 +76,14 @@ def stationarityTest(data =  dataset, order = 0, threshold = 0.01):
     st.subheader('Performing Dicky-Fuller test')
     st.markdown('H0 is the timeseries is not stationary')
     st.markdown('H1 timeseries is stationary')
-    threshold = st.select_slider('select threshold',(np.arange(0.01, 0.12, 0.01)) )
-    order = st.selectbox('Order of differencing', (range(10)))
+    st.markdown("Initial test required higher order differencing so a performed a log transform on the data")
+    threshold = st.select_slider('select threshold',(np.arange(0.01, 0.12, 0.01)), value=0.05 )
+    order = st.selectbox('Order of differencing', (range(5)))
     if order == 0:
         pass
     else:
+        #perform a log transform
+        data.iloc[:,:1] = np.log(data.iloc[:,:1])
         data = data.iloc[:,:1].diff(order).dropna()
     dftest = adfuller(data.iloc[:, :1], autolag='AIC')
     dfoutput = pd.Series(dftest[:4], index=['Test statistics',
