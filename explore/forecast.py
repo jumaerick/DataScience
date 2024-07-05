@@ -45,9 +45,15 @@ def autoCorrelation():
     plt.plot(results_AR.fittedvalues, color='red', label='Fitted')
     plt.plot(forecast, color='green', label='Forecasted')
     plt.title('Actual, Fitted, and Forecasted Values')
+    # st.dataframe(forecast_series)
+    # plt.plot(test_forecast, color='green')
 
     plt.legend(loc='best')
     st.pyplot(plt)
 
     st.header('SARIMA')
     st.markdown('The presence of the seasonal component imply that the SARIMA model will be the better choice')
+
+
+
+# lag_acf = acf(dataset['value (million $)'], nlags=20)
