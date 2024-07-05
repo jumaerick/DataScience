@@ -51,7 +51,3 @@ def autoCorrelation():
 
     st.header('SARIMA')
     st.markdown('The presence of the seasonal component imply that the SARIMA model will be the better choice')
-
-
-
-# lag_acf = acf(dataset['value (million $)'], nlags=20)
