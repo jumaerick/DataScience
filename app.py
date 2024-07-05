@@ -1,6 +1,7 @@
 import streamlit as st
 from explore import explorer
 from explore import decompose
+from explore import forecast
 
 st.title('Time Series Analysis')
 option = st.sidebar.selectbox('Select a task', ('Explore','Stationarity Test and Differencing', 'Forecasting'))
@@ -56,6 +57,7 @@ def main(item):
         #d Number of differencing
 
         st.text('ACF')
+        forecast.autoCorrelation()
         #collereation of TS with a lagged version of itself
         st.text('PACF')
         #collereation of TS with a lagged version of itself after removing variations explained by intermidiate terms 
