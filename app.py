@@ -58,6 +58,7 @@ def main(item):
         #d Number of differencing
 
         st.text('ACF')
+        forecast.autoCorrelation()
         #collereation of TS with a lagged version of itself
         st.text('PACF')
         #collereation of TS with a lagged version of itself after removing variations explained by intermidiate terms 
