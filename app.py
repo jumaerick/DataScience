@@ -11,7 +11,7 @@ def main(item):
     if item == 'explore':
         explorer.distributions()
         st.subheader('Decomposing the time series to its components')
-        decompose.seasonalComponentPlot()
+        # decompose.seasonalComponentPlot()
         st.markdown('The time series exhibits seasonality since peaks and troughs occur annualy')
         decompose.residualComponentPlot()
         st.markdown('There exists unpxplained noise/randomness in the data')
