@@ -17,24 +17,8 @@ def main(item):
         st.markdown('There exists unpxplained noise/randomness in the data')
         decompose.trendComponentPlot()
         st.markdown('The time series is moving in an upwards general direction')
-        st.markdown("")
-        st.markdown('The rolling mean and standard deviation at a window ')
-        decompose.rollingMeanStd()
-    # elif item == 'decompose':
-    #     # decompose.autoCorrelation()
-    #     st.markdown('Decomposing the time series to its components')
-    #     decompose.seasonalComponentPlot()
-    #     st.markdown('The time series exhibits seasonality since peaks and troughs occur annualy')
-    #     decompose.residualComponentPlot()
-    #     st.markdown('There exists unpxplained noise/randomness in the data')
-    #     decompose.trendComponentPlot()
-    #     st.markdown('The time series is moving in an upwards general direction')
-    #     st.markdown("")
-        # st.markdown('The rolling mean and standard deviation at a window ')
-        # decompose.rollingMeanStd()
 
     elif item == 'stationarity test':
-        # st.markdown('Stationarity Test')
         st.markdown('Since there exists a seasonal component, the time series is non stationary')
         decompose.residualComponentPlot()
         st.markdown('There exists unpxplained noise/randomness in the data')
@@ -50,12 +34,7 @@ def main(item):
         st.markdown('The rolling mean and std change with time but the varion in std is slight. This implies that the time series is non stationary')
         decompose.stationarityTest()
     else:
-<<<<<<< HEAD
-        forecast.seriesComponents()
-        st.text('ARIMA Auto Regressive Intergrated Moving Average')
-=======
         st.subheader('ACF and PACF plots')
->>>>>>> c778bb99529a05f4e2f1abe3b7374b11178881f3
         #equation (p,d,q)
         #AR = p the lags of dependent variable used
         #MA = q are lagged forecast errors in prediction equation
