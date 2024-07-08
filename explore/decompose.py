@@ -1,6 +1,4 @@
 from commonLibraries.libraries import *
-from statsmodels.tsa.seasonal import seasonal_decompose
-from statsmodels.tsa.stattools import adfuller
 
 dataset = dataLoader.getData()
 results = seasonal_decompose(dataset['value (million $)'], model='additive')
