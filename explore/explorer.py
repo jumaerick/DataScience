@@ -1,7 +1,5 @@
 from commonLibraries.libraries import *
-
 dataset = dataLoader.getData()
-
 
 def distributions():
     st.markdown(

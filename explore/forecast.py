@@ -37,7 +37,6 @@ def autoCorrelation():
     else:
         pass
 
-
 def ArimaModel():
     st.subheader('ARIMA model')
     st.markdown("From the ACF and PACF plots, we have MA(1)  and AR(4) or AR(3) models")
@@ -49,7 +48,7 @@ def ArimaModel():
     model = ARIMA(ts_diff, order=(AR_order, 1, 1))  
     results_AR = model.fit()  
     print(results_AR.summary())
-# Actual vs Fitted
+
     forecast_steps = 24  # Number of steps to forecast
     forecast = results_AR.predict(start=len(ts_diff)-1, end=len(ts_diff) + forecast_steps - 1, typ='levels')
     plt.figure(figsize=(12, 6))
