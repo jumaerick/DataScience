@@ -50,19 +50,23 @@ def main(item):
         st.markdown('The rolling mean and std change with time but the varion in std is slight. This implies that the time series is non stationary')
         decompose.stationarityTest()
     else:
+<<<<<<< HEAD
         forecast.seriesComponents()
         st.text('ARIMA Auto Regressive Intergrated Moving Average')
+=======
+        st.subheader('ACF and PACF plots')
+>>>>>>> c778bb99529a05f4e2f1abe3b7374b11178881f3
         #equation (p,d,q)
         #AR = p the lags of dependent variable used
         #MA = q are lagged forecast errors in prediction equation
         #d Number of differencing
 
-        st.text('ACF')
+        # st.text('ACF')
         forecast.autoCorrelation()
         #collereation of TS with a lagged version of itself
-        st.text('PACF')
+        # st.text('PACF')
         #collereation of TS with a lagged version of itself after removing variations explained by intermidiate terms 
-        pass
+
 
 if __name__ == '__main__':
     main(item = option)

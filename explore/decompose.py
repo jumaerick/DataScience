@@ -25,6 +25,16 @@ def seasonalComponentPlot():
     st.pyplot(plt)
 
 
+
+
+def seasonalComponentPlot():
+    fig = plt.figure()
+    sns.set(rc={'figure.figsize': (10, 5)})
+    sns.lineplot(results.seasonal)
+    plt.title('The seasonal component of the timeseries')
+    st.pyplot(plt)
+
+
 def residualComponentPlot():
     fig = plt.figure()
     sns.set(rc={'figure.figsize': (10, 5)})
@@ -94,6 +104,7 @@ def stationarityTest(data=dataset, order=0, threshold=0.05):
     st.subheader('Performing Dicky-Fuller test')
     st.markdown('H0 is the timeseries is not stationary')
     st.markdown('H1 timeseries is stationary')
+<<<<<<< HEAD
     st.markdown("Initial test required higher order differencing so a performed a log transform on the data")
     threshold = st.select_slider('select threshold',(np.arange(0.01, 0.12, 0.01)), value=0.05 )
     order = st.selectbox('Order of differencing', (range(5)))
@@ -109,6 +120,13 @@ def stationarityTest(data=dataset, order=0, threshold=0.05):
     if dd == 'Original':
         pass
     else:
+=======
+    dd = st.selectbox('Choose the dataset to use', ('Original', 'Transformed'))
+    ts = data.iloc[:, :1]
+    if dd == 'Original':
+        pass
+    else:
+>>>>>>> c778bb99529a05f4e2f1abe3b7374b11178881f3
         st.markdown(
         "Earlier tests showed higher order differencing were needed to make the time series stationary")
         st.markdown('We therefore need to transform the data first.')
