@@ -1,6 +1,4 @@
-<<<<<<< HEAD
 from commonLibraries.libraries import *
-
 from statsmodels.tsa.seasonal import seasonal_decompose
 
 dataset = dataLoader.getData()
@@ -25,7 +23,6 @@ def seriesComponents():
 
 def acfPlots():
     pass
-=======
 from commonLibraries.libraries import *
 from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.tsa.stattools import adfuller
@@ -85,4 +82,3 @@ def autoCorrelation():
 
 
 # lag_acf = acf(dataset['value (million $)'], nlags=20)
->>>>>>> f96b641edc030c821766629dda4ab2f99de70f02

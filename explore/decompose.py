@@ -1,54 +1,14 @@
-import streamlit as st
 from commonLibraries.libraries import *
-from statsmodels.tsa.seasonal
-from explore import explorer
-from explore import decompose
-from explore import forecast
+from statsmodels.tsa.seasonal import seasonal_decompose
+from statsmodels.tsa.stattools import adfuller
 
-st.title('Time Series Analysis')
-option = st.sidebar.selectbox('Select a task', ('Explore','Stationarity Test and Differencing', 'Forecasting'))
+dataset = dataLoader.getData()
+results = seasonal_decompose(dataset['value (million $)'], model='additive')
 
-def main(item):
-    item = item.lower()
-    if item == 'explore':
-        explorer.distributions()
-        st.subheader('Decomposing the time series to its components')
-        decompose.seasonalComponentPlot()
-        st.markdown('The time series exhibits seasonality since peaks and troughs occur annualy')
-        decompose.residualComponentPlot()
-        st.markdown('There exists unpxplained noise/randomness in the data')
-        decompose.trendComponentPlot()
-        st.markdown('The time series is moving in an upwards general direction')
-        st.markdown("")
-        st.markdown('The rolling mean and standard deviation at a window ')
-        decompose.rollingMeanStd()
-    # elif item == 'decompose':
-    #     # decompose.autoCorrelation()
-    #     st.markdown('Decomposing the time series to its components')
-    #     decompose.seasonalComponentPlot()
-    #     st.markdown('The time series exhibits seasonality since peaks and troughs occur annualy')
-    #     decompose.residualComponentPlot()
-    #     st.markdown('There exists unpxplained noise/randomness in the data')
-    #     decompose.trendComponentPlot()
-    #     st.markdown('The time series is moving in an upwards general direction')
-    #     st.markdown("")
-        # st.markdown('The rolling mean and standard deviation at a window ')
-        # decompose.rollingMeanStd()
-
-    elif item == 'stationarity test':
-        # st.markdown('Stationarity Test')
-        st.markdown('Since there exists a seasonal component, the time series is non stationary')
-        decompose.residualComponentPlot()
-        st.markdown('There exists unpxplained noise/randomness in the data')
-        decompose.trendComponentPlot()
-        st.markdown('The time series is moving in a general upwards direction')
-        st.markdown('Since there exists a trend component, the time series is non stationary')
-        st.markdown("")
-
-# def autoCorrelation():
-#     fig = plt.figure(figsize=(12, 6))
-#     pd.plotting.autocorrelation_plot(dataset.iloc[:, :2])
-#     st.pyplot(plt)
+def autoCorrelation():
+    fig = plt.figure(figsize=(12, 6))
+    pd.plotting.autocorrelation_plot(dataset.iloc[:, :2])
+    st.pyplot(plt)
 
 
 # def seasonalComponentPlot():
@@ -147,25 +107,65 @@ def stationarityTest(data=dataset, order=0, threshold=0.05):
     dd = st.selectbox('Choose the dataset to use', ('Original', 'Transformed'))
     ts = data.iloc[:, :1]
     if dd == 'Original':
-
-    elif item == 'stationarity test and differencing':
-        st.subheader('The changing mean and variation in the data at a specific window')
-        decompose.rollingMeanStd()
-        st.markdown('The rolling mean and std change with time but the varion in std is slight. This implies that the time series is non stationary')
-        decompose.stationarityTest()
-    else:
-        st.text('ARIMA Auto Regressive Intergrated Moving Average')
-        #equation (p,d,q)
-        #AR = p the lags of dependent variable used
-        #MA = q are lagged forecast errors in prediction equation
-        #d Number of differencing
-
-        st.text('ACF')
-        forecast.autoCorrelation()
-        #collereation of TS with a lagged version of itself
-        st.text('PACF')
-        #collereation of TS with a lagged version of itself after removing variations explained by intermidiate terms 
         pass
+    else:
+        st.markdown(
+        "Earlier tests showed higher order differencing were needed to make the time series stationary")
+        st.markdown('We therefore need to transform the data first.')
+        transMethod = st.selectbox(
+            'Transform method', ('Logarithimic', 'Square root', 'Cube root'))
+        transMethod = transMethod.lower()
+        if transMethod == 'logarithimic':
+            ts = np.log(ts)
+        elif transMethod == 'cube root':
+            ts = np.cbrt(ts)
+        else:
+            ts = np.sqrt(ts)
+    threshold = st.select_slider(
+        'select threshold', (np.arange(0.01, 0.12, 0.01)), value=0.05)
+    order = st.selectbox('Order of differencing', (range(5)))
 
-if __name__ == '__main__':
-    main(item = option)
+    if order == 0:
+        pass
+    else:
+        ts = ts.diff(order).dropna()
+    dftest = adfuller(ts, autolag='AIC')
+    dfoutput = pd.Series(dftest[:4], index=['Test statistics',
+                                            'p-value', '#Lags used', 'Number of Observations']).T
+    for key, value in dftest[4].items():
+        dfoutput['Criticat value (%s)' % key] = value
+    st.table(dfoutput)
+
+    if dfoutput['p-value'] >= 0.05:
+        st.markdown('Since the p-value > 0.05 we accept the null hypothesis')
+        st.markdown('Therefore the timeseries is not stationary')
+    else:
+        if dd == 'Transformed':
+            st.markdown(
+                'Since the p-value < %.2f we reject the null hypothesis' % (threshold))
+            st.markdown(
+                'Therefore applying %s transform and performing differencing of order %i makes the timeseries stationary' % (transMethod, order))
+        else:
+            st.markdown(
+            'Since the p-value < %.2f we reject the null hypothesis' % (threshold))
+            st.markdown(
+            'Therefore the timeseries is now stationary after performing differencing of order %i' % (order))
+
+
+def rollingMeanStd():
+    period = st.selectbox('select window period', (7, 14, 21, 30))
+    rolling_mean = dataset.iloc[:, :1].rolling(window=period).mean()
+    rolling_std = dataset.iloc[:, :1].rolling(window=period).std()
+    ts_maverage = dataset.iloc[:, :1] - rolling_mean
+    ts_mastd = dataset.iloc[:, :1] - rolling_std
+
+    fig = plt.figure(figsize=(10, 5))
+    plt.plot(dataset.iloc[:, :1])
+    plt.plot(dataset.iloc[:, :1], color='blue', label="Original Medical data")
+    plt.plot(ts_maverage, color='red', label="Rolling Mean Patient Number")
+    plt.plot(ts_mastd, color='black',
+             label="Rolling Standard Deviation Patient Number")
+    plt.legend(loc='best')
+    st.pyplot(plt)
+
+
