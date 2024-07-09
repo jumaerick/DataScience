@@ -11,36 +11,37 @@ def autoCorrelation():
     st.markdown('Here we used a lags of 30 observations for the analysis')
     lag_acf = plot_acf(ts_diff, lags = 30)
     st.pyplot(plt)
-    st.markdown("The autocorrelations are larger for lags at multiples of the seasonal frequency than for other lags.")
-    st.markdown('This implies the presence of seasonal component after every 12 months')
+    
     st.markdown('PACF plot shows the degree of similarity between a time series and a lagged version of itself after removing intermediate observation')
     lag_pacf = plot_pacf(ts_diff, lags=30)
+    plt.xlabel('Lags')
     st.pyplot(plt)
+    st.subheader('Inferences from the plots')
+    st.markdown(
+    """
+    - The autocorrelations are larger for lags which are multiples of the seasonal frequency than for other lags.
+        This implies the presence of seasonal component after every 12 months
+    - The ACF plot suggests lag 1 is the most significant and other significant observation occur after lag 12, 24 ...
+    - The partial correlations for lags 1 to 4 are statistically significant
+    - The ACF suggests fitting a first order MA model
+    - The PACF suggests fitting either third or fourth order AR model
+    """
+    )
 
-    st.markdown('The ACF suggests lag 1 is the most significant and other significant observation occur after lag 12, 24 ...')
-    st.markdown("The partial correlations for lags 1 to 4 are statistically significant")
-    st.markdown("The ACF suggests fitting a first order MA model")
-    st.markdown("The PACF suggests fitting either third or fourth order AR model")
-
-    st.title('Forecasting the data for the next 24 months')
+    st.subheader('Forecasting the data for the next 24 months')
     model = st.selectbox('Model for forecasting', ('Select model', 'ARIMA', 'SARIMA'))
     if model =='ARIMA':
         ArimaModel()
     elif model == 'SARIMA':
-
         SarimaModel()
     else:
         pass
 
 
-# lag_acf = acf(dataset['value (million $)'], nlags=20)
-
 def ArimaModel():
     st.subheader('ARIMA model')
-    st.markdown("From the ACF and PACF plots, we have MA(1)  and AR(4)")
+    st.markdown("From the ACF and PACF plots, we have MA(1)  and AR(4) or AR(3) models")
     st.markdown('Our ARIMA model will have the terms p = 3 or 4, d = 1, q=1 ')
-    # st.markdown("d is the order of differencing in this case one")
-    # model(p, d, q)
     AR = "p the lags of dependent variable used"
     MA = "q are lagged forecast errors in prediction equation"
     d =  "Number of differencing"
@@ -62,7 +63,7 @@ def ArimaModel():
 
 def SarimaModel():
     st.subheader('SARIMA model')
-    st.markdown('The presence of the seasonal component imply that the SARIMA model will be the better choice')
+    st.markdown('The presence of the seasonal component imply that the SARIMA model will be the better choice compared to ARIMA.')
     MA_order = st.selectbox('Order of MA', range(1, 6), index = range(1, 6).index(3))
     modelSarimax = SARIMAX(ts_diff, 
                 order=(MA_order, 1, 1),          # non-seasonal part: (p, d, q)
@@ -79,3 +80,7 @@ def SarimaModel():
     plt.title('Actual, Fitted, and Forecasted Values')
     plt.legend(loc='best')
     st.pyplot(plt)
+    st.markdown("""
+    From the above plots, we observe that an AR(3) or AR(4) fit the data nicely with the seasonal variations well accounted for 
+                compared to ARIMA model.
+    """)

@@ -3,24 +3,13 @@ from commonLibraries.libraries import *
 dataset = dataLoader.getData()
 results = seasonal_decompose(dataset['value (million $)'], model='additive')
 
-def autoCorrelation():
-    fig = plt.figure(figsize=(12, 6))
-    pd.plotting.autocorrelation_plot(dataset.iloc[:, :2])
-    st.pyplot(plt)
-
 def seasonalComponentPlot():
     fig = plt.figure()
     sns.set(rc={'figure.figsize': (10, 5)})
     sns.lineplot(results.seasonal)
     plt.title('The seasonal component of the timeseries')
     st.pyplot(plt)
-
-def seasonalComponentPlot():
-    fig = plt.figure()
-    sns.set(rc={'figure.figsize': (10, 5)})
-    sns.lineplot(results.seasonal)
-    plt.title('The seasonal component of the timeseries')
-    st.pyplot(plt)
+    st.markdown('The time series exhibits seasonality since peaks and troughs occur annualy')
 
 
 def residualComponentPlot():
@@ -29,6 +18,7 @@ def residualComponentPlot():
     sns.lineplot(results.resid)
     plt.title('The residual component of the timeseries')
     st.pyplot(plt)
+    st.markdown('There exists unpxplained noise/randomness in the data')
 
 
 def trendComponentPlot():
@@ -37,6 +27,7 @@ def trendComponentPlot():
     sns.lineplot(results.trend)
     plt.title('The trend component of the timeseries')
     st.pyplot(plt)
+    st.markdown('The time series is moving in an upwards general direction')
 
 
 def stationarityTest():
@@ -48,8 +39,8 @@ def stationarityTest():
 
 def rollingMeanStd():
     st.markdown(
-        'The rolling helps us determine by how much the present value changes with past value')
-    period = st.selectbox('select window period', (7, 14, 21, 30))
+        'The rolling mean and std help us determine by how much the present value changes with past value')
+    period = st.selectbox('Select window period', (7, 14, 21, 30))
     rolling_mean = dataset.iloc[:, :1].rolling(window=period).mean()
     rolling_std = dataset.iloc[:, :1].rolling(window=period).std()
     fig = plt.figure()
@@ -60,20 +51,25 @@ def rollingMeanStd():
              label="Rolling Standard Deviation Patient Number")
     plt.legend(loc='best')
     st.pyplot(plt)
-    st.markdown(
-        'Since the mean and std change with time, the time series is non stationary')
+    st.markdown('The rolling mean and std change with time but the variation in std is slight. This implies that the time series is non stationary')
 
 
 def stationarityTest(data=dataset, order=0, threshold=0.05):
     st.subheader('Performing Dicky-Fuller test')
-    st.markdown('H0 is the timeseries is not stationary')
-    st.markdown('H1 timeseries is stationary')
+    st.markdown('The null hypothesis H0  - The timeseries is not stationary')
+    st.markdown('The alternative hypothesis H1 - The timeseries is stationary')
 
     dftest = adfuller(data.iloc[:, :1], autolag='AIC')
-    dd = st.selectbox('Choose the dataset to use', ('Original', 'Transformed'))
-    ts = data.iloc[:, :1]
-    if dd == 'Original':
+    dd = st.selectbox('Choose the dataset to perform the test on', ('Select dataset', 'Original', 'Transformed'))
+    adFullerTest(dd)
+
+
+def adFullerTest(dd):
+    ts = dataset.iloc[:, :1]
+    if dd not in ('Original', 'Transformed'):
         pass
+    elif dd == 'Original':
+        adfResults(dd, ts)
     else:
         st.markdown(
         "Earlier tests showed higher order differencing were needed to make the time series stationary")
@@ -87,8 +83,12 @@ def stationarityTest(data=dataset, order=0, threshold=0.05):
             ts = np.cbrt(ts)
         else:
             ts = np.sqrt(ts)
+
+        adfResults(dd, ts, transMethod)
+
+def adfResults(dd, ts, transMethod=None):
     threshold = st.select_slider(
-        'select threshold', (np.arange(0.01, 0.12, 0.01)), value=0.05)
+    'Select threshold', (np.arange(0.01, 0.12, 0.01)), value=0.05)
     order = st.selectbox('Order of differencing', (range(5)))
 
     if order == 0:
@@ -116,6 +116,7 @@ def stationarityTest(data=dataset, order=0, threshold=0.05):
             'Since the p-value < %.2f we reject the null hypothesis' % (threshold))
             st.markdown(
             'Therefore the timeseries is now stationary after performing differencing of order %i' % (order))
+    pass
 
 
 

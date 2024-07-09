@@ -21,12 +21,20 @@ def distributions():
                             max_value=max_date, value=adder_days)
 #     month = st.selectbox('Select Month', months)
 #     day = st.selectbox('Select Day', days)
-    fig = plt.figure(figsize=(12, 6))
+    fig = plt.figure()
+    sns.set(rc={'figure.figsize': (10, 5)})
     sns.lineplot(x='date', y='value (million $)',
                  data=dataset.loc[Start_date:End_date:, ['value (million $)']])
 #     sns.boxplot(x='month', y='value (million $)', data = dataset)
     st.pyplot(plt)
-    st.markdown('There is a general increase in trend in the data with some seasonal variations')
+    st.markdown("""
+    - There is a general increase in sales overtime with annual variations depicted by troughs and spikes. This
+                a likely indicator of seasonal changes.
+    - The annual sales normally peak towards the end of January then plumites to lowest point 
+                towards the end of June and after which there is a sustained growth thoughout the second half of the year.
+    - In general, the sales continously drop during the frst half of the year and continously climb throughout the second half.
+                """)
+
 #     st.markdown('The time series for the one year interval starting from the minimum date of the observations')
 
     # st.title('Boxplot Analysis')
