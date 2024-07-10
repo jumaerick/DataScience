@@ -31,7 +31,7 @@ def trendComponentPlot():
 
 
 def stationarityTest():
-    st.markdown('Performing Dicky-Fuller test')
+    st.markdown('Performing ADF test for stationarity')
     st.markdown('H0 is the timeseries is not stationary')
     st.markdown('H1 timeseries is stationary')
     dftest = adfuller(dataset.iloc[:, :1], autolag='AIC')
