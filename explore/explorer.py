@@ -12,7 +12,6 @@ def distributions():
     min_date = dataset.index.min().date()
     max_date = dataset.index.max().date()
     adder_days = pd.to_datetime('1996-01-01').date()
-#     st.text(adder_days)
     Start_date = st.date_input('Start_date', min_value=min_date,
                             max_value=max_date, value=min_date)
     End_date = st.date_input('End_date', min_value=min_date,
