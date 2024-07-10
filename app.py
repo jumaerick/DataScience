@@ -4,7 +4,7 @@ from explore import decompose
 from explore import forecast
 
 st.sidebar.title('Time Series Analysis')
-option = st.sidebar.selectbox('Select a task', ('Explore','Stationarity Test and Differencing', 'Forecasting'))
+option = st.sidebar.selectbox('Select a task', ('Explore','Stationarity test and differencing', 'Forecasting'))
 
 def main(item):
     item = item.lower()
@@ -26,7 +26,6 @@ def main(item):
     else:
         st.subheader('ACF and PACF plots')
         forecast.autoCorrelation()
-
 
 if __name__ == '__main__':
     main(item = option)
