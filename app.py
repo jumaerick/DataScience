@@ -15,7 +15,6 @@ def main(item):
         #st.title('Sample data statistics')
         # st.dataframe(explorer.dataLoader())
         #explorer.getSummaries()
-        st.title('Bivariant Analysis')
         explorer.getClassDistribution()
         pass
     elif item == 'predict':

@@ -22,10 +22,11 @@ def getSummaries(data = df):
     # return df.describe()
 
 def getClassDistribution(data = df):
+    st.subheader('Bivariant Analysis')
     fig = plt.figure()
     # sns.scatterplot(x = 'sepal_length', y='petal_length',  data = data, c = pd.factorize(df['species'])[0])
-    x = st.selectbox('x', ('sepal_length', 'sepal_width', 'petal_length', 'petal_width'))
-    y = st.selectbox('y', ('sepal_width', 'sepal_length', 'petal_length', 'petal_width'))
+    x = st.selectbox('Feature One', ('sepal_length', 'sepal_width', 'petal_length', 'petal_width'))
+    y = st.selectbox('Feature Two', ('sepal_width', 'sepal_length', 'petal_length', 'petal_width'))
     if (x or y not in ('Select feature')):
         sns.scatterplot(x = x, y = y, data = data, hue = 'species')
         plt.xlabel(x)
