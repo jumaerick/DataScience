@@ -12,16 +12,19 @@ option = st.selectbox('Explore or Prediction Task',
 def main(item):
     item = item.lower()
     if item == "explore":
-        #st.title('Sample data statistics')
-        # st.dataframe(explorer.dataLoader())
-        st.subheader('Univariant Analysis')
-        explorer.getSummaries()
-        st.subheader('Bivariant Analysis')
-        explorer.getClassDistribution()
-        explorer.getHeatmaps()
-        pass
+        analysisType = st.selectbox('Analysis Type', ('Univariant', 'Bivariant'))
+        analysisType = analysisType.lower()
+        if analysisType == 'univariant':
+            st.subheader('Univariant Analysis')
+            explorer.getSummaries()
+        elif analysisType == 'bivariant':
+            st.subheader('Bivariant Analysis')
+            explorer.getClassDistribution()
+            explorer.getHeatmaps()
+
     elif item == 'predict':
         # predictor.featureSlider(item)
+        st.subheader('We will use a trained tensorflow model to perform the classification')
         featureDict = predictor.featureSlider(item)
         predictor.makePrediction(featureDict)
 

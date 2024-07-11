@@ -11,18 +11,21 @@ def get_data():
     isa = [i[:-4].strip() for i in np.unique(iris.feature_names)]
     target_names = ['_'.join(i.split(' ')) for i in isa]
 
-    df = pd.DataFrame(data = iris.data, columns = target_names)
+    df = pd.DataFrame(data=iris.data, columns=target_names)
     df['class'] = iris.target
-    d_s = {0:'Virginica', 1:'Versicolor', 2:'Setosa'}
-    dsw = lambda x :d_s[x]
+    d_s = {0: 'Virginica', 1: 'Versicolor', 2: 'Setosa'}
+    def dsw(x): return d_s[x]
     df['species'] = [dsw(i) for i in df['class']]
     return df
+
 
 def getIrisRaw():
     iris = load_iris()
     return iris
 
+
 df = get_data()
+
 
 @st.cache_data
 def get_scaler():
@@ -31,12 +34,12 @@ def get_scaler():
     y = np.zeros(shape=(X.shape[0], 3))
 
     for i, val in enumerate(df['class']):
-        if val=='Virginica':
-            y[i,:] = np.array([1, 0, 0])
-        elif val=='Versicolor':
-            y[i,:] = np.array([0, 1, 0])
-        elif val=='Setosa':
-            y[i,:] = np.array([0, 0, 1])
+        if val == 'Virginica':
+            y[i, :] = np.array([1, 0, 0])
+        elif val == 'Versicolor':
+            y[i, :] = np.array([0, 1, 0])
+        elif val == 'Setosa':
+            y[i, :] = np.array([0, 0, 1])
 
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=100)
@@ -46,7 +49,9 @@ def get_scaler():
     scaler.fit_transform(X_train)
     return scaler
 
-scaler  = get_scaler()
+
+scaler = get_scaler()
+
 
 def featureSlider(item):
     st.sidebar.header('Input Features')
@@ -93,17 +98,19 @@ def featureSlider(item):
 #         x = self.denseOne(x)
 #         x = self.denseTwo(x)
 #         return x
-    
+
 
 class DataLoader:
-  def __init__(self):
-    self.data = getIrisRaw().data
-    self.target = getIrisRaw().target
+    def __init__(self):
+        self.data = getIrisRaw().data
+        self.target = getIrisRaw().target
 
-  def splitData(self):
-    (train_data, test_data, train_labels, test_labels) = train_test_split(self.data, self.target, test_size = 0.2, random_state = 0)
-    return {'train_data' : train_data, 'test_data' : test_data, 'train_labels': train_labels, 'test_labels' : test_labels}
-  
+    def splitData(self):
+        (train_data, test_data, train_labels, test_labels) = train_test_split(
+            self.data, self.target, test_size=0.2, random_state=0)
+        return {'train_data': train_data, 'test_data': test_data, 'train_labels': train_labels, 'test_labels': test_labels}
+
+
 def trainModel():
 
     dataLoader = DataLoader()
@@ -111,14 +118,17 @@ def trainModel():
 
     model = Sequential()
     model.add(keras.layers.Flatten())
-    model.add(keras.layers.Dense(units = 20, activation='relu'))
-    model.add(keras.layers.Dense(3, activation = 'softmax'))
-    model.compile(optimizer = 'adam', loss='sparse_categorical_crossentropy', metrics = ['accuracy'])
-    model.fit(loadedData['train_data'], loadedData['train_labels'], batch_size = 10, epochs = 50,
-        validation_data=[loadedData['test_data'], loadedData['test_labels']], validation_batch_size = 5)
-    
-    print(f"Test Accuracy: %.2f"%(model.evaluate(loadedData['test_data'], loadedData['test_labels']))[-1])
-    print(f"Train Accuracy: %.2f"%(model.evaluate(loadedData['train_data'], loadedData['train_labels']))[-1])
+    model.add(keras.layers.Dense(units=20, activation='relu'))
+    model.add(keras.layers.Dense(3, activation='softmax'))
+    model.compile(optimizer='adam',
+                  loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+    model.fit(loadedData['train_data'], loadedData['train_labels'], batch_size=10, epochs=50,
+              validation_data=[loadedData['test_data'], loadedData['test_labels']], validation_batch_size=5)
+
+    print(f"Test Accuracy: %.2f" % (model.evaluate(
+        loadedData['test_data'], loadedData['test_labels']))[-1])
+    print(f"Train Accuracy: %.2f" % (model.evaluate(
+        loadedData['train_data'], loadedData['train_labels']))[-1])
     model.save("./mlModels/model.keras")
     pass
 
@@ -126,15 +136,17 @@ def trainModel():
 # model = load_model('./mlModels/model.keras', custom_objects={'IrisModel': IrisModel})
 model = load_model('./mlModels/model.keras')
 # Make predictions
-model.compile(optimizer = 'adam', loss='sparse_categorical_crossentropy', metrics = ['accuracy'])
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
 
 def makePrediction(payload):
     y_pred = model.predict(payload)
     df_pred = pd.DataFrame({
-    'Species': ['Virginica', 'Versicolor', 'Setosa'],
-    'Confidence': y_pred.flatten()
-})
+        'Species': ['Virginica', 'Versicolor', 'Setosa'],
+        'Confidence': y_pred.flatten()
+    })
     # st.dataframe(df_pred)
     fig = plt.figure()
-    sns.barplot(x = 'Species', y='Confidence', data = df_pred, hue='Species')
+    sns.barplot(x='Species', y='Confidence', data=df_pred, hue='Species')
     st.pyplot(plt)
