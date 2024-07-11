@@ -14,8 +14,11 @@ def main(item):
     if item == "explore":
         #st.title('Sample data statistics')
         # st.dataframe(explorer.dataLoader())
-        #explorer.getSummaries()
+        st.subheader('Univariant Analysis')
+        explorer.getSummaries()
+        st.subheader('Bivariant Analysis')
         explorer.getClassDistribution()
+        explorer.getHeatmaps()
         pass
     elif item == 'predict':
         # predictor.featureSlider(item)

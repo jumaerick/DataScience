@@ -17,12 +17,27 @@ df = dataLoader()
 
 def getSummaries(data = df):
     fig = plt.figure()
-    sns.pairplot(data, diag_kind='kde', hue='species')
+    plt.pie(data.loc[:, 'class'].value_counts(), labels = data.loc[:, 'species'].value_counts().index, autopct='%.2f%%')
+    # st.dataframe(data.loc[:, 'class'].value_counts())
+    # sns.pairplot(data, diag_kind='hist', hue='species')
     st.pyplot(plt)
+    st.markdown('This is a balanced dataset with equal number of instances for each of the 3 classes')
+
+def getHeatmaps(data = df):
+    fig = plt.figure()
+    numericFeatures = data.select_dtypes(exclude='object')
+    
+    corrCoeff = numericFeatures.corr(method='pearson')
+    sns.heatmap(corrCoeff, cmap='inferno', annot=True)
+    st.pyplot(plt)
+    st.markdown('The petal width has a weak positive correlation with other features and the target classes')
+    st.markdown(""" The sepal length and sepal width have a strong positive correlation with the target classes.
+                They therefore seam to explain the target classes much better.
+                """)
+
     # return df.describe()
 
 def getClassDistribution(data = df):
-    st.subheader('Bivariant Analysis')
     fig = plt.figure()
     # sns.scatterplot(x = 'sepal_length', y='petal_length',  data = data, c = pd.factorize(df['species'])[0])
     x = st.selectbox('Feature One', ('sepal_length', 'sepal_width', 'petal_length', 'petal_width'))
