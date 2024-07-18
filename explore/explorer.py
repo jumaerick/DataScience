@@ -98,37 +98,45 @@ def groupedData():
 
 def conversionbyChannel():
     st.subheader('Average conversion rate by channel')
-    x = lambda x: x.round(2)
+    def x(x): return x.round(2)
     customers_copy = dataset.copy()
-    customers_copy['conversion_rate'] = x(customers_copy['conversion_rate'].values*100)
+    customers_copy['conversion_rate'] = x(
+        customers_copy['conversion_rate'].values*100)
     avg_conversion = customers_copy.groupby('channel', as_index=False)['conversion_rate'].mean().sort_values(
-    by='conversion_rate',
-    ascending= False
+        by='conversion_rate',
+        ascending=False
     )
     avg_conversion['conversion_rate'] = x(avg_conversion['conversion_rate'])
-    fig, ax = plt.subplots(figsize=(10,6))
-    ax = sns.barplot(y="%s"%('channel'), x = 'conversion_rate', data = avg_conversion, hue='channel')
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax = sns.barplot(y="%s" % ('channel'), x='conversion_rate',
+                     data=avg_conversion, hue='channel')
     for container in ax.containers:
-        ax.bar_label(container,fmt='%.2f%%')
+        ax.bar_label(container, fmt='%.2f%%')
     plt.xlabel('Average Conversion Rate')
     # plt.text(10, 5, 5)
-    
+
     st.pyplot(plt)
+    st.markdown("""
+    - Social media is the best converting channel followed by referral. It is worth noting that both of these channels have a low average cost and high average revenue.
+    - Paid advertising is the lowest converting channel despite it being the most expensive.
+    - Email marketing although being the cheapest, it has a low conversion rate.
+    """)
 
 
 def roiCalculator():
     st.markdown("ROI of a channel refers to average revenue over average cost")
     grouped_data = dataset.groupby('channel', as_index=False)[
-    ['revenue', 'cost']].mean().sort_values(by = 'cost')
+        ['revenue', 'cost']].mean().sort_values(by='cost')
     grouped_data['roi'] = grouped_data['revenue'] / grouped_data['cost']
-    fig, ax = plt.subplots(figsize=(10,6))
-    ax = sns.barplot(x = 'channel', y = 'roi', data = grouped_data, hue='channel')
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax = sns.barplot(x='channel', y='roi', data=grouped_data, hue='channel')
     st.pyplot(plt)
     st.markdown("""
     - Email marketing has the highest return on investment and paid advertising channel has the lowest.
     """)
 
-def cltvCalcultaor():
+
+def cltvCalcultor():
     """
     This function will complute the customer life time value using the formula
     """
@@ -136,15 +144,17 @@ def cltvCalcultaor():
     customers_copy = dataset.copy()
     customers_copy['cltv'] = (customers_copy['revenue'] - customers_copy['cost']) * customers_copy[
         'conversion_rate'] / customers_copy['cost']
-    
-    grouped_cltv = customers_copy.groupby('channel', as_index=False)['cltv'].mean().sort_values(by = 'cltv', ascending=False)
-    box_topcltvs = customers_copy.loc[customers_copy['channel'].isin(['social media','referral'])]
-    plt.figure(figsize=(8,6))
-    sns.barplot(x ='channel', y = 'cltv', data = grouped_cltv, hue='channel')
+
+    grouped_cltv = customers_copy.groupby('channel', as_index=False)[
+        'cltv'].mean().sort_values(by='cltv', ascending=False)
+    box_topcltvs = customers_copy.loc[customers_copy['channel'].isin(
+        ['social media', 'referral'])]
+    plt.figure(figsize=(8, 6))
+    sns.barplot(x='channel', y='cltv', data=grouped_cltv, hue='channel')
     plt.title("The average CLTV of each channel")
     st.pyplot(plt)
-    plt.figure(figsize=(8,6))
+    plt.figure(figsize=(8, 6))
     plt.title("The two channels with high average CLTV")
-    sns.boxplot(x='channel', y = 'cltv', data = box_topcltvs, hue='channel')
-    plt.legend(box_topcltvs['channel'].unique(), loc = 'best')
+    sns.boxplot(x='channel', y='cltv', data=box_topcltvs, hue='channel')
+    plt.legend(box_topcltvs['channel'].unique(), loc='best')
     st.pyplot(plt)

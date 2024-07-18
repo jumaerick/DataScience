@@ -8,21 +8,29 @@ This is the overall worth of a customer to the business throughout the period
             of their relationship with the business.
 """)
 
-task_type = st.selectbox('Analysis Type', ('Multivariant','Univariant'))
+task = st.selectbox('Select task', ('Analysis','Compute ROI', 'Compute CLTV'))
 
 def main(item):
-    item = item.lower()
-    if item == 'multivariant':
-        explorer.scatterPlots('cost', 'revenue', hue='channel')
-        explorer.groupedData()
-        explorer.conversionbyChannel()
+    if item == 'Analysis':
+        task_type = st.selectbox('Analysis Type', ('Univariant', 'Multivariant'))
+        if task_type == 'Multivariant':
+            explorer.scatterPlots('cost', 'revenue', hue='channel')
+            explorer.groupedData()
+            explorer.conversionbyChannel()
+        else:
+            explorer.getSummaries()
+            explorer.checkNormalDist()
+    elif item=='Compute ROI':
         explorer.roiCalculator()
-        explorer.cltvCalcultaor()
-    else:
-        explorer.getSummaries()
-        explorer.checkNormalDist()
+        
+
+    elif item=='Compute CLTV':
+            explorer.cltvCalcultor()
+    # task_type = st.selectbox('Analysis Type', ('Multivariant','Univariant'))
+    # item = item.lower()
+
         # explorer.scatterPlots('cost', 'revenue', hue='channel')
 
 
 if __name__=='__main__':
-    main(task_type)
+    main(task)
