@@ -14,10 +14,14 @@ def main(item):
     item = item.lower()
     if item == 'multivariant':
         explorer.scatterPlots('cost', 'revenue', hue='channel')
+        explorer.groupedData()
+        explorer.conversionbyChannel()
+        explorer.roiCalculator()
+        explorer.cltvCalcultaor()
     else:
         explorer.getSummaries()
         explorer.checkNormalDist()
-        explorer.scatterPlots('cost', 'revenue', hue='channel')
+        # explorer.scatterPlots('cost', 'revenue', hue='channel')
 
 
 if __name__=='__main__':
