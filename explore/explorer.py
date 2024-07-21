@@ -5,11 +5,12 @@ dataset = dataLoader.readFile()
 
 
 def getSummaries():
+    st.markdown("Sample statistical data about the dataset")
     st.table(dataset.describe())
 
 
 def checkNormalDist():
-    st.text("Check if the features follow normal distribution")
+    st.markdown("Check if the features follow normal distribution")
     sns.pairplot(dataset, diag_kind='kde')
     st.pyplot(plt)
     st.markdown("""
@@ -45,6 +46,7 @@ def scatterPlots(feature_x, feature_y, hue=None):
 
 
 def groupedData():
+    st.subheader('Aggregated Metrics')
     customers_copy = dataset.copy()
     metric = st.selectbox('Select metric', ('Average', 'Total'))
     x = 'average'
@@ -124,7 +126,13 @@ def conversionbyChannel():
 
 
 def roiCalculator():
-    st.markdown("ROI of a channel refers to average revenue over average cost")
+    st.markdown("""
+    ROI is a performance metrics that compares the profit or loss of an investiment to its cost 
+        
+                \n
+                The ROI computation formula is given below
+                    ROI = revenue / cost 
+                """)
     grouped_data = dataset.groupby('channel', as_index=False)[
         ['revenue', 'cost']].mean().sort_values(by='cost')
     grouped_data['roi'] = grouped_data['revenue'] / grouped_data['cost']
@@ -137,24 +145,36 @@ def roiCalculator():
 
 
 def cltvCalcultor():
-    """
-    This function will complute the customer life time value using the formula
-    """
-    # CLTV = (revenue - cost) * conversion_rate / cost
+    st.markdown("""
+    This is the overall worth of a customer to the business throughout the period 
+                of their relationship with the business.
+    \n
+                The customer life time value computation formula is given below
+                    CLTV = (revenue - cost) * conversion_rate / cost
+    """)
     customers_copy = dataset.copy()
     customers_copy['cltv'] = (customers_copy['revenue'] - customers_copy['cost']) * customers_copy[
         'conversion_rate'] / customers_copy['cost']
 
     grouped_cltv = customers_copy.groupby('channel', as_index=False)[
         'cltv'].mean().sort_values(by='cltv', ascending=False)
-    box_topcltvs = customers_copy.loc[customers_copy['channel'].isin(
-        ['social media', 'referral'])]
+    
+    # st.text(grouped_cltv.iloc[:2, :]['channel'].values)
+
+    # st.dataframe(customers_copy.loc[customers_copy['channel'].isin(grouped_cltv.iloc[:2, :]['channel'].values)])
+    # box_topcltvs = customers_copy.loc[customers_copy['channel'].isin(
+    #     ['social media', 'referral'])]
+    
+    box_topcltvs = customers_copy.loc[customers_copy['channel'].isin(grouped_cltv.iloc[:2, :]['channel'].values)]
+    box_topcltvs = box_topcltvs.sort_values(by='cltv', ascending=False)
+    sorted_cltvs = box_topcltvs['channel'].unique()
+    # st.dataframe(box_topcltvs.sort_values(by='cltv', ascending=False)['channel'].unique())
     plt.figure(figsize=(8, 6))
     sns.barplot(x='channel', y='cltv', data=grouped_cltv, hue='channel')
     plt.title("The average CLTV of each channel")
     st.pyplot(plt)
     plt.figure(figsize=(8, 6))
-    plt.title("The two channels with high average CLTV")
+    st.markdown("The two channels with high average CLTV")
     sns.boxplot(x='channel', y='cltv', data=box_topcltvs, hue='channel')
-    plt.legend(box_topcltvs['channel'].unique(), loc='best')
+    plt.legend(sorted_cltvs, loc='best')
     st.pyplot(plt)

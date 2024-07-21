@@ -3,23 +3,32 @@ from explore import explorer
 from loadData import dataLoader
 
 st.title("Customer Lifetime Value")
-st.markdown("""
-This is the overall worth of a customer to the business throughout the period 
-            of their relationship with the business.
-""")
+
+st.markdown(
+    """
+    <style>
+    .stSelectbox div[data-baseweb="select"] > div:first-child {
+        background-color: mediumspringgreen;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 task = st.selectbox('Select task', ('Analysis','Compute ROI', 'Compute CLTV'))
 
 def main(item):
     if item == 'Analysis':
-        task_type = st.selectbox('Analysis Type', ('Univariant', 'Multivariant'))
-        if task_type == 'Multivariant':
+        # task_type = st.selectbox('Analysis Type', ('Univariant', 'Multivariant'))
+        # if task_type == 'Multivariant':
+            st.subheader("Feature summaries and distribution types")
+            explorer.getSummaries()
+            explorer.checkNormalDist()
+            st.subheader('Bivariant Analysis')
             explorer.scatterPlots('cost', 'revenue', hue='channel')
             explorer.groupedData()
             explorer.conversionbyChannel()
-        else:
-            explorer.getSummaries()
-            explorer.checkNormalDist()
+
     elif item=='Compute ROI':
         explorer.roiCalculator()
         
@@ -34,3 +43,5 @@ def main(item):
 
 if __name__=='__main__':
     main(task)
+
+
