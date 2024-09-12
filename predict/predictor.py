@@ -10,7 +10,7 @@ dataset = dataLoader.loadData()
 
 
 class Clustering:
-    def __init__(self, n_iters = 10):
+    def __init__(self, n_iters = 15, scores = {}):
         self.dataset = dataset
         self.n_iters = n_iters
 
@@ -22,22 +22,41 @@ class Clustering:
         Define the model
         """
         X = self.dataset[features]
-        scores = {'iter': [], 'inertia': [], 'dbs': [], 'shs': []}
+        scores = {'iters': [], 'inertia': [], 'dbs': [], 'shs': []}
         for i in range(2, self.n_iters):
             model = KMeans(n_clusters = i)
             model.fit(self.dataset[features])
             clusters = model.labels_
-            scores['iter'].append(i)
+            scores['iters'].append(i)
             scores['inertia'].append(model.inertia_)
             scores['dbs'].append(davies_bouldin_score(X, labels = clusters))
             scores['shs'].append(silhouette_score(X, labels = clusters))
-        fig = plt.figure()
-        plt.plot( scores['iter'], scores['shs'])
-        plt.plot( scores['iter'], scores['dbs'])
-        return st.pyplot(plt)
+        return scores
         
     
 cluster = Clustering()
 
-def performClustering():
-    return cluster.scoring(['Age','Spending Score (1-100)'])
+scores = cluster.scoring(['Annual Income (k$)','Spending Score (1-100)'])
+
+def plotInertias():
+    fig = plt.figure()
+    plt.plot(scores['iters'], scores['inertia'])
+    plt.xlabel('Number of iterations')
+    plt.ylabel('Computed inertia')
+    return st.pyplot(plt)
+
+
+def plotSHS():
+    fig = plt.figure()
+    plt.plot(scores['iters'], scores['shs'], c='g')
+    plt.xlabel('Number of iterations')
+    plt.ylabel('SIilhoutte Score')
+    return st.pyplot(plt)
+
+
+def plotDBS():
+    fig = plt.figure()
+    plt.plot(scores['iters'], scores['dbs'], c='y')
+    plt.xlabel('Number of iterations')
+    plt.ylabel('Davies Bouldine Score')
+    return st.pyplot(plt)

@@ -47,7 +47,12 @@ def main(option):
         else:
             explorer.basicInfo()
     elif option == 'Prediction':
-        predictor.performClustering()
+        st.subheader('Plot of iterations against inertia')
+        predictor.plotInertias()
+        st.subheader('Plot of iterations against Silhoutte Score')
+        predictor.plotSHS()
+        st.subheader('Plot of iterations against Davies-Bouldine Score')
+        # predictor.plotDBS()
     else:
         st.markdown("""
                     In this project, we are going to explore the mall customers dataset. The dataset consist various 
