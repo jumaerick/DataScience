@@ -8,7 +8,7 @@ Read the file to a list of dictionaries
 """
 path = '.'
 def loadData(filename = 'Mall_customers.csv'):
-    file = filename
+    file = pd.read_csv('transactions.csv')
     with open(file) as openFile:
         lines = [line.strip().split(',') for line in openFile.readlines()]
         cols =  lines[0]
@@ -21,7 +21,8 @@ def loadData(filename = 'Mall_customers.csv'):
         df[col] = df[col].astype(float)
     # df = [df[col].astype(float) for col in cols]
     # st.text(df)
+    df = pd.read_csv('Mall_Customers.csv')
     return df.iloc[:, 1:]
 
 
-dataset = loadData()
+dataset = pd.read_csv('Mall_Customers.csv')
