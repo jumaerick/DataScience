@@ -8,7 +8,7 @@ Read the file to a list of dictionaries
 """
 path = '.'
 def loadData(filename = 'Mall_customers.csv'):
-    file = os.path.join(path, filename)
+    file = filename
     with open(file) as openFile:
         lines = [line.strip().split(',') for line in openFile.readlines()]
         cols =  lines[0]
