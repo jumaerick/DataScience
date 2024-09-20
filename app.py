@@ -51,8 +51,14 @@ def main(option):
         predictor.plotInertias()
         st.subheader('Plot of iterations against Silhoutte Score')
         predictor.plotSHS()
+        st.markdown("""
+        - A higher Silhoutte Score index is well matched to its own cluster and poorly matched to the neighbouring clusters.
+            """)
         st.subheader('Plot of iterations against Davies-Bouldine Score')
-        # predictor.plotDBS()
+        predictor.plotDBS()
+        st.markdown("""
+        - A lower Davies - Bouldine index indicates better clustering
+                    """)
     else:
         st.markdown("""
                     In this project, we are going to explore the mall customers dataset. The dataset consist various 

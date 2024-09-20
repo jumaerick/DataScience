@@ -2,3 +2,4 @@ env
 .env
 __pycache__/
 creditcard.csv
+Kmeans.ipynb
