@@ -6,7 +6,7 @@ import os
 """
 Read the file to a list of dictionaries
 """
-path = './'
+path = './datasets'
 def loadData(filename = 'Mall_customers.csv'):
     file = os.path.join(path, filename)
     with open(file) as openFile:
