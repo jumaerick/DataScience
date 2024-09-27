@@ -36,6 +36,18 @@ class Clustering:
     
 cluster = Clustering()
 
+def selectFeatures():
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        feature1 = st.selectbox('Feature X', ('Annual Income (k$)','Spending Score (1-100)', 'Age'))
+
+    with col3:
+        feature2 = st.selectbox('Feature y', ('Spending Score (1-100)','Annual Income (k$)', 'Age'))
+
+    return {'feature1':feature1, 'feature2':feature2}
+
+st.text(selectFeatures())
+
 scores = cluster.scoring(['Annual Income (k$)','Spending Score (1-100)'])
 
 def plotInertias():
