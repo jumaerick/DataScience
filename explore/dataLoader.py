@@ -25,4 +25,4 @@ def loadData(filename = 'Mall_customers.csv'):
     return df.iloc[:, 1:]
 
 
-dataset = loadData()
+# dataset = loadData()
