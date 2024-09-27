@@ -47,6 +47,7 @@ def main(option):
         else:
             explorer.basicInfo()
     elif option == 'Prediction':
+        predictor.selectFeatures()
         st.subheader('Plot of iterations against inertia')
         predictor.plotInertias()
         st.subheader('Plot of iterations against Silhoutte Score')
