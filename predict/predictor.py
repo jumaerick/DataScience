@@ -39,18 +39,20 @@ cluster = Clustering()
 def selectFeatures():
     col1, col2, col3 = st.columns(3)
     with col1:
-        feature_n = st.selectbox('Feature m', ('Annual Income (k$)','Spending Score (1-100)', 'Age'))
+        feature_n = st.selectbox('Feature x', ('Annual Income (k$)','Spending Score (1-100)', 'Age'))
 
     with col3:
         feature_m = st.selectbox('Feature y', ('Spending Score (1-100)','Annual Income (k$)', 'Age'))
 
     return {'feature1': feature_n, 'feature2':feature_m}
 
-features = selectFeatures()
 
-scores = cluster.scoring([features['feature1'],features['feature2']])
+
 
 def plotInertias():
+    features = selectFeatures()
+    global scores
+    scores = cluster.scoring([features['feature1'],features['feature2']])
     fig = plt.figure()
     plt.plot(scores['iters'], scores['inertia'])
     plt.xlabel('Number of iterations')

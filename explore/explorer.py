@@ -30,6 +30,13 @@ def genderDistribution():
     # plt.title('Distribution of the dataset by Gender')
     st.pyplot(fig)
 
+def pairDistribution():
+    fig = plt.figure(figsize=(10, 5))
+    # sns.boxplot(dataset, orient='h')
+    sns.pairplot(dataset, hue='Age')
+    st.pyplot(fig)
+
+
 def featureComparison():
     plt.figure(figsize=(10,5))
 

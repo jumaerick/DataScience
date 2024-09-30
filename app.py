@@ -13,13 +13,16 @@ st.markdown(
     unsafe_allow_html=True
 )
 st.title('Customers Segmentation')
-selection = st.sidebar.selectbox('Select a task', ('Select a task', 'EDA','Prediction'), label_visibility= 'hidden')
+selection = st.sidebar.selectbox(
+    'Select a task', ('Select a task', 'EDA', 'Prediction'), label_visibility='hidden')
+
 
 def main(option):
     if option == 'EDA':
-        analysisype = st.selectbox('Type of analysis', ('Dataset summaries', 'Bivariant'))
+        analysisype = st.selectbox(
+            'Type of analysis', ('Dataset summaries', 'Bivariant'))
         if analysisype == 'Bivariant':
-            # explorer.genderDistribution() 
+            # explorer.genderDistribution()
             explorer.featureComparison()
             st.markdown("""
                 - Annual income and spending score plot reveals the following groups:
@@ -46,8 +49,9 @@ def main(option):
                        """)
         else:
             explorer.basicInfo()
+
     elif option == 'Prediction':
-        predictor.selectFeatures()
+        # predictor.selectFeatures()
         st.subheader('Plot of iterations against inertia')
         predictor.plotInertias()
         st.subheader('Plot of iterations against Silhoutte Score')
@@ -72,6 +76,7 @@ def main(option):
                     
                     """)
     pass
+
 
 if __name__ == '__main__':
     main(selection)
