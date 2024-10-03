@@ -18,6 +18,26 @@ def basicInfo():
     st.text(dataset.isnull().sum())
     st.markdown("\n ### Checking the basic statistical information of each feature \n")
     st.table(dataset.describe())
+
+def boxPlots():
+    """
+    Inspecting various information about the dataset
+    """
+    st.markdown("\n ### Checking the skewness of the data\n")
+    fig = plt.figure()
+    sns.boxplot(dataset, orient='h')
+    st.pyplot(fig)
+
+
+def pairPlots():
+    """
+    Inspecting various information about the dataset
+    """
+    fig = plt.figure()
+    sns.pairplot(data=dataset, diag_kind='kde')
+    # sns.pairplot(dataset, diag_kind='kde')
+    st.pyplot(plt.gcf())
+
     
 def genderDistribution():
     """

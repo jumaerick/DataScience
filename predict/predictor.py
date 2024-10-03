@@ -5,6 +5,7 @@ import seaborn as sns
 import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.metrics import davies_bouldin_score, silhouette_score
+import scipy.cluster.hierarchy as shc
 
 dataset = dataLoader.loadData()
 
@@ -32,6 +33,8 @@ class Clustering:
             scores['dbs'].append(davies_bouldin_score(X, labels = clusters))
             scores['shs'].append(silhouette_score(X, labels = clusters))
         return scores
+    
+
         
     
 cluster = Clustering()
@@ -45,7 +48,6 @@ def selectFeatures():
         feature_m = st.selectbox('Feature y', ('Spending Score (1-100)','Annual Income (k$)', 'Age'))
 
     return {'feature1': feature_n, 'feature2':feature_m}
-
 
 
 
@@ -64,7 +66,9 @@ def plotSHS():
     fig = plt.figure()
     plt.plot(scores['iters'], scores['shs'], c='g')
     plt.xlabel('Number of iterations')
-    plt.ylabel('SIilhoutte Score')
+    plt.ylabel('Silhoutte Score')
+    sorted_scores = sorted(scores['shs'])
+    # st.text(min(sorted_scores))
     return st.pyplot(plt)
 
 
@@ -74,3 +78,9 @@ def plotDBS():
     plt.xlabel('Number of iterations')
     plt.ylabel('Davies Bouldine Score')
     return st.pyplot(plt)
+
+
+def plotDendogram():
+    fig = plt.figure()
+    dend = shc.dendrogram(shc.linkage(dataset.iloc[:, 1:], method='ward'))
+    st.pyplot(fig)

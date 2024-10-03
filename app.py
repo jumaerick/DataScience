@@ -48,7 +48,19 @@ def main(option):
                 -  High income earners were equally distributed among males and females.               
                        """)
         else:
+
+            explorer.boxPlots()
+            st.markdown("""
+                -  The graph is left skewed if most points (tails off) to the left mean<median<mode;
+                -  The graph is right skewed if most points (tails off) to the right mean>median>mode;
+                -  (Q2 - Q1) > (Q3 - Q2) left skewed.
+                -  (Q2 - Q1) < (Q3 - Q2) righ skewed
+                                    
+            """)
+            explorer.pairPlots()
+
             explorer.basicInfo()
+
 
     elif option == 'Prediction':
         # predictor.selectFeatures()
@@ -64,6 +76,8 @@ def main(option):
         st.markdown("""
         - A lower Davies - Bouldine index indicates better clustering
                     """)
+        
+        predictor.plotDendogram()
     else:
         st.markdown("""
                     In this project, we are going to explore the mall customers dataset. The dataset consist various 
