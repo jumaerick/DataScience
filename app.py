@@ -28,7 +28,7 @@ st.markdown(
     .col_heading{
         color:#000;
     }
-    .st-emotion-cache-1n76uvr, .st-emotion-cache-uzeiqp{
+    .st-emotion-cache-uzeiqp{
         margin-top: -4em;
     }
     .st-emotion-cache-12fmjuu{
