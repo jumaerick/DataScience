@@ -28,6 +28,12 @@ st.markdown(
     .col_heading{
         color:#000;
     }
+    .st-emotion-cache-1n76uvr{
+        margin-top: -4em;
+    }
+    .st-emotion-cache-12fmjuu{
+        display:none;
+    }
 
     </style>
     """,
