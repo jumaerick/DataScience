@@ -8,14 +8,14 @@ filename = 'creditcard.csv'
 path = '../datasets'
 
 def importData():
-    df = pd.read_csv(os.path.join(path, filename), header = None)
+    # df = pd.read_csv(os.path.join(path, filename), header = None)
     # with open(os.path.join(path, filename)) as openfile:
     #     lines = [line.strip().split(',') for line in openfile.readlines()]
     #     cols = [i for i in range(len(lines[0]))]
     #     datadict = [{cols[key]: float(val.strip('""')) for key, val in enumerate(line)} for line in lines]
     #     df =  pd.DataFrame(datadict)
     #     df[cols[-1]] = df[cols[-1]].astype(int)
-    return df
+    return 
 
 
 dataset = importData()
