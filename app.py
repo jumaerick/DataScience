@@ -28,7 +28,10 @@ st.markdown(
     .col_heading{
         color:#000;
     }
-    
+
+    .st-emotion-cache-12fmjuu{
+        display:none;
+    }
 
     </style>
     """,
