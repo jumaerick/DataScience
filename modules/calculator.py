@@ -28,13 +28,11 @@ def calculate():
                 '5':{'multiplier':81, 'formular': -(initial*volume + 3*(initial*volume) + 9*(initial*volume) + 27*(initial*volume))},
                 }
             stageStr = str(stages)
-            status['target'].append(initial)
-            status['days'].append(period//2)
             initial += stagesMultipliers[stageStr]['multiplier']*((initial*volume) * profit) + stagesMultipliers[stageStr]['formular']
             # print(initial)
-            status['target'].append(initial)
             period += 1
-
+            status['target'].append(initial)
+            status['days'].append(period//2)
     updatedDF = pd.DataFrame()
         
     df = pd.DataFrame(status)
