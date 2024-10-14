@@ -30,6 +30,7 @@ def calculate():
             stageStr = str(stages)
             initial += stagesMultipliers[stageStr]['multiplier']*((initial*volume) * profit) + stagesMultipliers[stageStr]['formular']
             # print(initial)
+            status['target'].append(initial)
             period += 1
             status['target'].append(initial)
             status['days'].append(period//2)
