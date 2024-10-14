@@ -4,7 +4,7 @@ import pandas as pd
 
 def calculate():
     
-    initial = st.number_input('Initial Investment', value = 300)
+    initial = st.number_input('Initial Investment', value = 300.00)
     target = st.number_input('Target Investment')
     profit = st.select_slider('Profit Margin', options=[round(i, 2) for i in np.arange(0.6, 0.71, 0.01)], value= 0.62)
     volumeT = (1/121)
@@ -29,10 +29,10 @@ def calculate():
                 }
             stageStr = str(stages)
             initial += stagesMultipliers[stageStr]['multiplier']*((initial*volume) * profit) + stagesMultipliers[stageStr]['formular']
-            status['target'].append(initial)
-            status['days'].append(period//2)
             # print(initial)
             period += 1
+            status['target'].append(initial)
+            status['days'].append(period//2)
     updatedDF = pd.DataFrame()
         
     df = pd.DataFrame(status)
