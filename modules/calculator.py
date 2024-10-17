@@ -18,13 +18,13 @@ def calculate():
         status = {'target': [], 'days': []}
         while initial < target:
             stagesMultipliers = {'1': {'multiplier':1, 'formular':0},
-                '2': {'multiplier':3, 'formular': -(initial*volume)}, 
-                '3':{'multiplier':9, 'formular': -(initial*volume + 3*(initial*volume))},
-                '4':{'multiplier':27, 'formular': -(initial*volume + 3*(initial*volume) + 9*(initial*volume)) },
-                '5':{'multiplier':81, 'formular': -(initial*volume + 3*(initial*volume) + 9*(initial*volume) + 27*(initial*volume))},
+                '2': {'multiplier':3, 'formular': -(volume)}, 
+                '3':{'multiplier':9, 'formular': -(volume + 3**volume)},
+                '4':{'multiplier':27, 'formular': -(volume + 3*(volume) + 9*(volume)) },
+                '5':{'multiplier':81, 'formular': -(volume + 3*(volume) + 9*(volume) + 27*(volume))},
                 }
             stageStr = str(stages)
-            initial += stagesMultipliers[stageStr]['multiplier']*((initial*volume) * profit) + stagesMultipliers[stageStr]['formular']
+            initial += stagesMultipliers[stageStr]['multiplier']*((volume) * profit) + stagesMultipliers[stageStr]['formular']
             # print(initial)
             period += 1
             status['target'].append(initial)
