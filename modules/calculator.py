@@ -37,7 +37,7 @@ def calculate():
                 '5':{'multiplier':81, 'formular': -(volume + 3*(volume) + 9*(volume) + 27*(volume))},
                 }
             stageStr = str(stages)
-            st.text(stagesMultipliers[stageStr]['multiplier']*((volume) * profit) + stagesMultipliers[stageStr]['formular'])
+            st.text(initial - stagesMultipliers[stageStr]['multiplier']*((volume) * profit) + stagesMultipliers[stageStr]['formular'])
     updatedDF = pd.DataFrame()
         
     df = pd.DataFrame(status)
