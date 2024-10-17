@@ -38,7 +38,7 @@ def calculate():
                     '5':{'multiplier':81, 'formular': -(volume + 3*(volume) + 9*(volume) + 27*(volume))},
                     }
                 stageStr = str(stages)
-                initial = stagesMultipliers[stageStr]['multiplier']*((volume) * profit) + stagesMultipliers[stageStr]['formular']
+                initial += stagesMultipliers[stageStr]['multiplier']*((volume) * profit) + stagesMultipliers[stageStr]['formular']
                 # print(initial)
                 period += 1
                 status['target'].append(initial)
