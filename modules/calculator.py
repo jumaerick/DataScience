@@ -16,7 +16,7 @@ def calculate():
     # initial=0.0
     if (initial > 0.0):
         #volume = st.select_slider('Trading percentage', options=[i for i in np.arange(0.0, 1.1, 0.1)], value= round((1/121*100),1))/100
-        volume = st.number_input('Volume', value = initial/121)
+        volume = st.number_input('Volume', value = initial/121, min_value=0, max_value=initial)
         stages = st.select_slider('Select Stages', options=[i for i in range(1, 6, 1)], value=1)
         status = {'target': [], 'days': []}
         if volume == 0.008:
