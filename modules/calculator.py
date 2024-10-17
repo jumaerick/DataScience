@@ -30,7 +30,7 @@ def calculate():
                 status['target'].append(initial)
                 status['days'].append(period//2)
         else : 
-            st.text('hapa')
+            st.text(stagesMultipliers[stageStr]['multiplier']*((volume) * profit) + stagesMultipliers[stageStr]['formular'])
     updatedDF = pd.DataFrame()
         
     df = pd.DataFrame(status)
