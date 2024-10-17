@@ -16,8 +16,6 @@ def calculate():
         volume = st.number_input('Volume', min_value=0.0, max_value=initial,  value = initial/121)
         stages = st.select_slider('Select Stages', options=[i for i in range(1, 6, 1)], value=1)
         status = {'target': [], 'days': []}
-        if volume == 0.008:
-            volume = volumeT
         while initial < target:
             stagesMultipliers = {'1': {'multiplier':1, 'formular':0},
                 '2': {'multiplier':3, 'formular': -(initial*volume)}, 
