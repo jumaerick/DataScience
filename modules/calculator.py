@@ -7,7 +7,6 @@ def calculate():
     initial = st.number_input('Initial Investment', value = 300.00)
     target = st.number_input('Target Investment')
     profit = st.select_slider('Profit Margin', options=[round(i, 2) for i in np.arange(0.6, 0.71, 0.01)], value= 0.62)
-    volumeT = (1/121)
     period = 1
     
     # initial=0.0
@@ -16,6 +15,7 @@ def calculate():
         volume = st.number_input('Volume', min_value=0.0, max_value=initial,  value = initial/121)
         stages = st.select_slider('Select Stages', options=[i for i in range(1, 6, 1)], value=1)
         status = {'target': [], 'days': []}
+        if(volume <= initial/121):
         while initial < target:
             stagesMultipliers = {'1': {'multiplier':1, 'formular':0},
                 '2': {'multiplier':3, 'formular': -(volume)}, 
@@ -29,6 +29,8 @@ def calculate():
             period += 1
             status['target'].append(initial)
             status['days'].append(period//2)
+    else : 
+        st.text('hapa')
     updatedDF = pd.DataFrame()
         
     df = pd.DataFrame(status)
