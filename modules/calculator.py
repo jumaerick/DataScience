@@ -10,9 +10,6 @@ def calculate():
     volumeT = (1/121)
     period = 1
     
-    # if(initial > 0.0):
-    #     stages = st.select_slider('Trading percentage', options=[i for i in np.arange(0.0, 1.1, 0.1)], value= round((1/121*100),1))/100      
-        
     # initial=0.0
     if (initial > 0.0):
         #volume = st.select_slider('Trading percentage', options=[i for i in np.arange(0.0, 1.1, 0.1)], value= round((1/121*100),1))/100
