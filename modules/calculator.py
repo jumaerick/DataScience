@@ -29,8 +29,8 @@ def calculate():
             period += 1
             status['target'].append(initial)
             status['days'].append(period//2)
-    else : 
-        st.text('hapa')
+        else : 
+            st.text('hapa')
     updatedDF = pd.DataFrame()
         
     df = pd.DataFrame(status)
