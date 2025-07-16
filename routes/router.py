@@ -186,28 +186,76 @@ def increment_oi_timestamp(
 
 start = int(dt.datetime(2022, 1, 1, tzinfo=dt.timezone.utc).timestamp()* 1000)
 
-interval = "15min"
-symbol = 'BTCUSDT'
-all_oi = pd.DataFrame()
-end = increment_oi_timestamp(start_ts=start, unit=interval, n_units=199)
-while True:
-    response = client.get_open_interest(category='linear', 
-                                symbol=symbol, 
-                                startTime=start,
-                                endTime=end,
-                                intervalTime=interval, limit=200)
+# interval = "15min"
+# symbol = 'BTCUSDT'
+# all_oi = pd.DataFrame()
+# end = increment_oi_timestamp(start_ts=start, unit=interval, n_units=199)
+# while True:
+#     response = client.get_open_interest(category='linear', 
+#                                 symbol=symbol, 
+#                                 startTime=start,
+#                                 endTime=end,
+#                                 intervalTime=interval, limit=200)
     
-    latest = format_bybit_oi(response.get('result', {}).get('list',[]))
+#     latest = format_bybit_oi(response.get('result', {}).get('list',[]))
+#     start = get_last_timestamp(latest)
+#     end = increment_oi_timestamp(start_ts=start, unit=interval, n_units=199)
+#     time.sleep(0.01)
+#     all_oi = pd.concat([all_oi, latest])
+#     print(f'Collecting data starting {dt.datetime.fromtimestamp(start/1000)}')
+#     if len(latest) == 1: break
+
+
+# all_oi.drop_duplicates(subset=['timestamp'], keep='last', inplace=True)
+# all_oi.to_csv('data/BTC_USDT_OI_15min.csv', index=False)
+# all_oi['openInterest'].plot()
+# plt.xlabel('Date')
+# plt.ylabel('BTC Open Contracts (BTC units)')
+
+
+# peiod = "30min"
+# symbol = 'BTCUSDT'
+# end = increment_oi_timestamp(start_ts=start, unit='30min', n_units=199)
+# response =client.get_long_short_ratio(category='linear', symbol=symbol, period=interval, limit=500)
+
+
+# print(response.get('result',{}))
+
+## get all long short ratio 
+def format_long_short_ratio(response: list[dict]) -> pd.DataFrame:
+    if not response:
+        return pd.DataFrame()
+    df = pd.DataFrame(response)
+    df['buyRatio'] = df.buyRatio.astype(float)
+    df['sellRatio'] = df.sellRatio.astype(float)
+    df['long_short_ratio'] = df.buyRatio / df.sellRatio
+    df['timestamp'] = df.timestamp.astype(np.int64)
+    df.index = pd.to_datetime(df.timestamp, unit='ms', utc=True)
+    return df.sort_index()
+
+
+start = int(dt.datetime(2022, 1, 1, tzinfo=dt.timezone.utc).timestamp()* 1000)
+peiod = "15min"
+symbol = 'BTCUSDT'
+all_long_short = pd.DataFrame()
+end = increment_oi_timestamp(start_ts=start, unit='15min', n_units=199)
+
+while True:
+    response = client.get_long_short_ratio(category='linear', 
+                                 symbol=symbol, 
+                                 startTime=start,
+                                 endTime=end,
+                                 period=interval, limit=500)
+    
+    latest = format_long_short_ratio(response.get('result', {}).get('list',[]))
+    print(latest)
     start = get_last_timestamp(latest)
     end = increment_oi_timestamp(start_ts=start, unit=interval, n_units=199)
     time.sleep(0.01)
-    all_oi = pd.concat([all_oi, latest])
+    all_long_short = pd.concat([all_long_short, latest])
     print(f'Collecting data starting {dt.datetime.fromtimestamp(start/1000)}')
     if len(latest) == 1: break
 
-
-all_oi.drop_duplicates(subset=['timestamp'], keep='last', inplace=True)
-all_oi.to_csv('data/BTC_USDT_OI_15min.csv', index=False)
-all_oi['openInterest'].plot()
-plt.xlabel('Date')
-plt.ylabel('BTC Open Contracts (BTC units)')
+    
+all_long_short.drop_duplicates(subset=['timestamp'], keep='last', inplace=True)
+all_long_short.to_csv('data/BTCUSDT_long_short_15min.csv', index=False)
