@@ -207,3 +207,7 @@ while True:
 
 
 all_oi.drop_duplicates(subset=['timestamp'], keep='last', inplace=True)
+all_oi.to_csv('data/BTC_USDT_OI_15min.csv', index=False)
+all_oi['openInterest'].plot()
+plt.xlabel('Date')
+plt.ylabel('BTC Open Contracts (BTC units)')
