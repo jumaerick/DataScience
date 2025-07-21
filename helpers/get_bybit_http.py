@@ -5,8 +5,8 @@ import os
 # Load environment variables from .env file
 load_dotenv()
 
-# key = os.getenv('ACCESS_KEY')
-# secret = os.getenv('SECRET_KEY')
+key = os.getenv('ACCESS_KEY')
+secret = os.getenv('SECRET_KEY')
 testnet_str = os.getenv('TESTNET', 'False')  # Default to False
 testnet = testnet_str.lower() in ('true', '1', 'yes')
 

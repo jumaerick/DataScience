@@ -1,4 +1,5 @@
 from helpers.get_bybit_http import get_client
+from helpers import get_bybit_http
 import pandas as pd
 import numpy as np
 import datetime as dt 
@@ -6,6 +7,8 @@ import time
 import mplfinance as mpf
 import matplotlib.pyplot as plt
 import time
+from pybit.unified_trading import WebSocket
+import json
 
 
 # For Demo trading
@@ -483,20 +486,213 @@ time.sleep(20)
 #     print (f"order {oid} not found")
 
 
-info = client.get_instruments_info(category='linear')
+# info = client.get_instruments_info(category='linear')
 
-symbols = info.get('result').get('list')
+# symbols = info.get('result').get('list')
 
 
-def get_symbol_info(symbol, symbols):
+# def get_symbol_info(symbol, symbols):
     
-    info = [x for x in symbols if x['symbol'] == symbol]
-    if info:
-        return info[0]
+#     info = [x for x in symbols if x['symbol'] == symbol]
+#     if info:
+#         return info[0]
 
-    raise Exception(f'Information for symbol = {symbol} not found')
+#     raise Exception(f'Information for symbol = {symbol} not found')
     
     
 
 
-print(get_symbol_info('ETHUSDT', symbols))
+# print(get_symbol_info('ETHUSDT', symbols))
+
+public= WebSocket(channel_type='linear', testnet=False)
+private = WebSocket(channel_type='private',
+api_key = get_bybit_http.key,
+api_secret = get_bybit_http.secret,
+testnet=False,
+)
+
+orderbook = [] 
+   
+def handle_orderbook_message(message):
+    '''
+    custom on callback function for orderbook stream , insert given values
+    in to dictionary to be appended to oderbook list. 
+    None.
+
+    '''
+    
+    data = message.get('data', None)
+    
+    global orderbook 
+    
+    current = {}
+    if data:
+        try:
+            current['asset'] = data.get('s')
+            current['best_bid'] = float(data.get('b')[0][0])
+            current['bid_volume'] = float(data.get('b')[0][1])
+            current['best_ask'] = float(data.get('a')[0][0])
+            current['ask_volume'] = float(data.get('a')[0][1])
+            orderbook.append(current)
+        except (TypeError, IndexError, AttributeError):
+            pass
+        
+        
+# public.orderbook_stream(depth=1, symbol='BTCUSDT', callback=handle_orderbook_message)    
+
+# for _ in range(10):
+#     print(len(orderbook))
+#     time.sleep(1)
+#     print(orderbook[-1])
+
+# from collections import deque
+
+# orderbook = deque(maxlen=(1000))
+
+THRESHOLD = 100_000
+
+def handle_trade_message(message):
+    '''
+    message example
+    {
+    "topic": "publicTrade.BTCUSDT",
+    "type": "snapshot",
+    "ts": 1672304486868,
+    "data": [
+        {
+            "T": 1672304486865,
+            "s": "BTCUSDT",
+            "S": "Buy",
+            "v": "0.001",
+            "p": "16578.50",
+            "L": "PlusTick",
+            "i": "20f43950-d8dd-5b31-9112-a178eb6023af",
+            "BT": false
+                }
+            ]
+        }
+    
+
+    custom callback to detect trades over a certain size
+
+    '''
+
+    try:
+        data = message.get('data')
+        for trade in data:
+            value = float(trade.get('v')) * float((trade.get('p')))
+            
+            if value > THRESHOLD:
+                print(f"A trade to {trade.get('S')} {value} was just executed")
+            else:
+                pass
+    except (ValueError, AttributeError):
+        pass
+
+# public.trade_stream(symbol='BTCUSDT', callback=handle_trade_message)
+
+long_liqs = [] 
+short_liqs = [] 
+
+    
+def handle_liquidation_message(message):
+    '''
+    {
+    "data": {
+        "price": "0.03803",
+        "side": "Buy",
+        "size": "1637",
+        "symbol": "BTCUSDT",
+        "updatedTime": 1673251091822
+    },
+    "topic": "liquidation.GALAUSDT",
+    "ts": 1673251091822,
+    "type": "snapshot"
+    }
+    
+    '''
+    global long_liqs, short_liqs 
+    
+    try:
+        data = message.get('data')
+        if data.get('side') == 'Buy':
+            usd_val = float(data.get('size')) * float(data.get('price'))
+            print(f'A long degen just got liquidated for {usd_val}')
+            long_liqs.append(usd_val)
+        elif data.get('side') == 'Sell':
+            usd_val = float(data.get('size')) * float(data.get('price'))
+            print(f'A short degen just got liquidated for {usd_val}')
+            short_liqs.append(usd_val) 
+        else:
+            pass
+    except (TypeError, ValueError, IndexError):
+        pass
+    
+            
+    
+    
+# public.liquidation_stream(symbol='BTCUSDT', callback=handle_liquidation_message) 
+
+
+# while True:
+    
+#     timenow = dt.datetime.now() 
+    
+#     if timenow.minute==0 and timenow.second==0:
+#         print(f'A total of {sum(long_liqs)} longs have been rekt in last hour')
+#         print(f'A total of {sum(short_liqs)} shorts have been rekt in last hour')
+#         #reset the lists for the next hour of slaughter
+#         longs_liqs = [] 
+#         short_liqs = [] 
+#         time.sleep(1)
+    
+#     elif timenow.second %30 == 0:
+#         print(f'A total of {sum(long_liqs)} longs have been rekt so far in this hour')
+#         print(f'A total of {sum(short_liqs)} shorts have been rekt so far in this hour')
+#         time.sleep(1)
+
+doge_position = 0 
+
+def handle_position_message(message):
+    '''
+    
+    custom error message to retrieve position of given asset.
+
+    '''
+    global doge_position
+    try:
+        data = message.get('data', [])
+        for pos in data:
+            if pos['symbol'] == 'DOGEUSDT':
+                if pos['side'] == 'Sell':
+                    doge_position = - float(pos['size'])
+                elif pos['side'] == 'Buy':
+                    doge_position = float(pos['size'])
+                else:
+                    doge_position =  0
+            else:
+                pass
+    except (IndexError, AttributeError, TypeError):
+        pass
+
+
+
+
+# private.position_stream(callback=handle_position_message)
+
+# while True:
+    
+#     if doge_position > 0:
+#         print(f'Excellent you just bought  {doge_position} DOGE!!!!!!!')
+#         break
+#     elif doge_position < 0:
+#         print(f'Not breaking until you buy a DOGE bagholders must resort to extraordinary measures while underwater')
+#     else:
+#         print('Waiting for you to buy a DOGE ')
+
+
+def handle_orders_message(message):
+    print(message)
+
+
+private.order_stream(callback=handle_orders_message)
