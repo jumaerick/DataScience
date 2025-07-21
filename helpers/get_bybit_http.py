@@ -21,7 +21,7 @@ def get_client(testnet: bool) -> HTTP:
         api_key = os.getenv("BYBIT_LIVE_API_KEY")
         api_secret = os.getenv("BYBIT_LIVE_API_SECRET")
 
-    client = HTTP(api_key=api_key, api_secret=api_secret, testnet=testnet)
+    client = HTTP(api_key=api_key, api_secret=api_secret, testnet=testnet, recv_window=10000)
     try:
         response = client.get_account_info()
         # print("✅ API keys are working!")
