@@ -694,5 +694,4 @@ def handle_position_message(message):
 def handle_orders_message(message):
     print(message)
 
-
 private.order_stream(callback=handle_orders_message)
