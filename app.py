@@ -1,3 +1,3 @@
-from routes import router
+from routes import bollinger
 
 # router.testConnection()
