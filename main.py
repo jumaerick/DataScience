@@ -122,7 +122,7 @@ with sync_playwright() as p:
 
     page.wait_for_selector("div.search_bar1", timeout=20000)
     df_names = pd.read_csv('product_names.csv')
-    searchNames = df_names.iloc[:, 0].values[:10]
+    searchNames = df_names.iloc[:, 0].values[:3]
     print(searchNames)
     search = page.locator('.search_input:visible')
     dismiss_cookie_banner(page)
@@ -248,35 +248,10 @@ with sync_playwright() as p:
                 print('could not find the results')
             page.wait_for_timeout(60000)
 
-    # for searchTerms in searchNames:
 
-    #     searchItems = 0
-    #     if search.count() > 0:
-    #         search.first.click()
-    #         search.first.fill('')  # clear just in case
-    #         search.first.type(searchTerms, delay=50)
-    #     try:
-    #         page.wait_for_selector('.counter', timeout=5000)
-    #         results = page.locator('.counter')
-    #         searchItems = results.count()
-    #     except:
-    #         continue
-    #         # print('No results found')
-
-    #     if searchItems > 0:
-    #         page.wait_for_selector("div.ex.ex--list", timeout=30000)
-    #         cards = page.locator("div.ex.ex--list")
-    #         count = cards.count()
-
-    #         if count > 0:
-    #             for j in range(count):
-    #                 card = cards.nth(j)
-    #                 name = card.locator(".ex__data-title")
-    #                 if name.count()>0:
-    #                     if(name == searchTerms ):
-    #                         print(f'opening child up {name.inner_text()}')
-    #     page.wait_for_timeout(10000)
-    # browser.close()
-    # dismiss cookie banner at the start
+    df = pd.DataFrame.from_dict(companyDic, orient="index").reset_index()
+    # df_products = pd.DataFrame.from_dict(productDic, orient="index").reset_index()
+    df.rename(columns={'index':'Winery Name'}, inplace=True)
+    df.to_csv('test.csv',index=None)
 
 
