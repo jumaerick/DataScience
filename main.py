@@ -1,5 +1,6 @@
 from playwright.sync_api import sync_playwright
 import pandas as pd
+from datetime import datetime
 
 url = "https://ecatalogue.firabarcelona.com/barcelonawineweek2026/home?filter=ONLY_EXHIBITORS&lang=en_GB"
 
@@ -25,27 +26,30 @@ with sync_playwright() as p:
 
     # --- STEP 1: EXPANSION ---
     print('Starting list expansion...')
-    max_batches = 15 # Set this higher (e.g., 150) to get all 1,354 items
-    batch = 0
-    while batch < max_batches:
-        see_more = page.locator('.see_more_button:visible')
-        if see_more.count() > 0:
-            see_more.first.click()
-            batch += 1
-            # Wait for items to actually load
-            page.wait_for_timeout(2000) 
-            if batch % 5 == 0: print(f"Expanded {batch} batches...")
-        else:
-            break
+    max_batches = 1354 # clearSet this higher (e.g., 150) to get all 1,354 items
+    # batch = 0
+    # while batch < max_batches:
+    #     see_more = page.locator('.see_more_button:visible')
+    #     if see_more.count() > 0:
+    #         see_more.first.click()
+    #         batch += 1
+    #         # Wait for items to actually load
+    #         page.wait_for_timeout(2000) 
+    #         if batch % 5 == 0: print(f"Expanded {batch} batches...")
+    #     else:
+    #         break
 
     # --- STEP 2: COLLECTION ---
-    cards_titles = page.locator("div.ex.ex--list .ex__data-title")
-    company_names = [cards_titles.nth(i).get_attribute("title") for i in range(cards_titles.count())]
+    card_names = pd.read_csv('product_names.csv').head(max_batches).loc[:, 'product_name']
+    # cards_titles = page.locator("div.ex.ex--list .ex__data-title")
+    company_names = card_names.values
     print(f"Collected {len(company_names)} names. Starting deep scrape...")
 
     # --- STEP 3: SEARCH-AND-SCRAPE ---
     companyDic = {}
-    
+    notRun= []
+    start = datetime.now()
+    print('Job started at', start)
     for i, name in enumerate(company_names):
         print(f"[{i+1}/{len(company_names)}] Scraping: {name}")
         
@@ -57,56 +61,216 @@ with sync_playwright() as p:
             search_input.fill(name)
             page.keyboard.press("Enter")
             
-            # 2. Wait for result to filter
-            page.wait_for_selector("div.ex.ex--list", timeout=15000)
-            page.locator("div.ex.ex--list").first.click()
-
-            # 3. Wait for Detail Page to fully load
-            page.wait_for_load_state("networkidle")
-            page.wait_for_selector(".detail-content__title", timeout=20000)
-
-            # --- DATA EXTRACTION ---
-            company_title = page.locator(".detail-content__title").inner_text()
+            # page.wait_for_load_state("networkidle")
+            # page.wait_for_selector(".detail-content__title", timeout=60000)
+                #     if see_more.count() > 0:
+    #         see_more.first.click()
+    #         batch += 1
+    #         # Wait for items to actually load
+    #         page.wait_for_timeout(2000) 
+    #         if batch % 5 == 0: print(f"Expanded {batch} batches...")
+    #     else:
+    #         break
             
-            # Initialize storage for this company
-            company_info = {
-                'Description': page.locator('.detail-content__description').inner_text() if page.locator('.detail-content__description').count() > 0 else "",
-                'Trade Show Location': page.locator('.detail-map__location').inner_text() if page.locator('.detail-map__location').count() > 0 else "",
-                'Website': '', 'Phone': '', 'Location': ''
-            }
+            # 2. Wait for result to filter
+            # page.wait_for_load_state("networkidle")
+            page.wait_for_selector("div.ex.ex--list", timeout=60000)
+            pager = page.locator('div.ex.ex--list')
+            if pager.count() > 0:
+                # page.locator("div.ex.ex--list").first.click()
+                items = [pager.nth(m).locator('.ex__data-title').inner_text() for m in range(pager.count())]
+                pager.nth(items.index(name)).locator('.ex__data-title').click()
+                # 3. Wait for Detail Page to fully load
+                # page.wait_for_load_state("networkidle")
+                page.wait_for_selector(".detail-content__title", timeout=60000)
 
-            # Contacts
-            contacts = page.locator('.detail-contact__item')
-            for w in range(contacts.count()):
-                item = contacts.nth(w)
-                text = item.inner_text().strip()
-                if not text: continue
+                products = page.locator('.ex__data')
+
+                # # wait a short time for the first product to appear
+                # try:
+                #     products.first.wait_for(state="attached", timeout=3000)  # 3 seconds
+                # except TimeoutError:
+                #     # element didn't appear — no products
+                #     products_count = 0
+                # else:
+                products_count = products.count()
+                # print(products_count)
+
+                # --- DATA EXTRACTION ---
+                productNames = page.locator('.product__exhibitor-name')
+
+                company = page.locator(".detail-content__title").inner_text()
+
+                #Handling missing information
+                company_description = ''
+                product_titles, product_descriptions = [], []
+                website, phone, address,social = '','','', ''
+
+                if(page.locator('.detail-content__description').count() > 0):
+                    company_description = page.locator('.detail-content__description').inner_text()
+
+                trade_show_location = page.locator('.detail-map__location').inner_text()
+                # print(company_description)
+
+                for j in range(products_count):
+                    title_locator = products.nth(j).locator(".ex__data-title")
+                    if title_locator.count() > 0:
+                        product_titles.append(title_locator.inner_text())
+                    else:
+                        product_titles.append(None) 
+                # if(products.count() > 0):
+                #     product_titles = [products.nth(j).locator(".ex__data-title").inner_text() for j in range(products.count())]
+                product_descriptions = [productNames.nth(j).inner_text() for j in range(productNames.count())]
+                contacts = page.locator('.detail-contact__item')
                 
-                if item.locator('.is-link').count() > 0:
-                    company_info['Website'] = text
-                elif text.startswith('+') or any(char.isdigit() for char in text[:3]):
-                    company_info['Phone'] = text
-                else:
-                    company_info['Location'] = text
 
-            # Products
-            product_cards = page.locator('.ex.ex--list') # The cards inside the detail page
-            for k in range(product_cards.count()):
-                p_title = product_cards.nth(k).locator(".ex__data-title").inner_text()
-                company_info[f"Product {k+1}"] = p_title
+                for w in range(contacts.count()):
+                    contact = contacts.nth(w)
+            
+                    if(len(contact.inner_text()) > 0):
+                        if (contact.locator('.is-link').count()>0):
+                            website= contact.inner_text()
+                            # print('website')
+                        elif(contact.locator('.social-links').count() > 0):
+                            social = contact.inner_text()
+                            # print('social')
+                        elif( contact.inner_text()[0] == '+'):
+                            phone = contact.inner_text()
+                            # print('phone')
+                        else:
+                            address = contact.inner_text()
+                            # print('address')
+                    else:
+                        pass
 
-            companyDic[company_title] = company_info
+                companyDic.update({company: {'Winery Description': company_description,'Website': website, 
+                                            'Winery Location': address, 'Phone #': phone, 'Trade Show Location':trade_show_location}})
+                
+                for k in range(len(product_titles)):
+                    companyDic[company][f"Product {k+1} Name"] = product_titles[k]
+                    companyDic[company][f"Product {k+1} Description"] = product_descriptions[k]
 
-            # 4. RESET STATE - Go back to search
-            page.go_back()
-            page.wait_for_selector("input.search_input", timeout=10000)
+
+                # 4. RESET STATE - Go back to search
+                page.goto(url)
+                page.wait_for_selector("input.search_input", timeout=20000)
 
         except Exception as e:
+            # notRun = []
+            notRun.append(name)
             print(f"Server lag or Error for {name}. Resetting... ({e})")
-            page.goto(url, wait_until="networkidle")
+            page.goto(url)
             dismiss_cookie_banner(page)
+
+    #Little delays between retries
+    while notRun:
+        # page.wait_for_timeout(5000)
+        for i, name in enumerate(notRun):
+            print('Retrying failed jobs')
+            print(f"[{i+1}/{len(notRun)}] Scraping: {name}")
+            
+            try:
+                # 1. Clear and fill search safely
+                search_input = page.locator("input.search_input").first
+                search_input.click(click_count=3) # Highlight existing text
+                page.keyboard.press("Backspace")
+                search_input.fill(name)
+                page.keyboard.press("Enter")
+                
+                # 2. Wait for result to filter
+                # page.wait_for_load_state("networkidle")
+                page.wait_for_selector("div.ex.ex--list")
+                pager = page.locator('div.ex.ex--list')
+                if pager.count() > 0:
+                    # page.locator("div.ex.ex--list").first.click()
+                    items = [pager.nth(m).locator('.ex__data-title').inner_text() for m in range(pager.count())]
+                    # pager.nth(items.index(name)).locator('.ex__data-title').click()
+                    ite = pager.nth(items.index(name)).locator('.ex__data-title')
+                    if ite.count() > 0:
+                        notRun.remove(ite.first.inner_text())
+                        ite.first.click()
+                    # 3. Wait for Detail Page to fully load
+                    # page.wait_for_load_state("networkidle")
+                    page.wait_for_selector(".detail-content__title", timeout=60000)
+
+                    products = page.locator('.ex__data')
+
+                    # wait a short time for the first product to appear
+                    # page.wait_for_load_state("networkidle")
+                    products_count = products.count()
+                    # print(products_count)
+
+                    # --- DATA EXTRACTION ---
+                    productNames = page.locator('.product__exhibitor-name')
+
+                    company = page.locator(".detail-content__title").inner_text()
+
+                    #Handling missing information
+                    company_description = ''
+                    product_titles, product_descriptions = [], []
+                    website, phone, address,social = '','','', ''
+
+                    if(page.locator('.detail-content__description').count() > 0):
+                        company_description = page.locator('.detail-content__description').inner_text()
+
+                    trade_show_location = page.locator('.detail-map__location').inner_text()
+                    # print(company_description)
+
+                    for j in range(products_count):
+                        title_locator = products.nth(j).locator(".ex__data-title")
+                        if title_locator.count() > 0:
+                            product_titles.append(title_locator.inner_text())
+                        else:
+                            product_titles.append(None) 
+                    # if(products.count() > 0):
+                    #     product_titles = [products.nth(j).locator(".ex__data-title").inner_text() for j in range(products.count())]
+                    product_descriptions = [productNames.nth(j).inner_text() for j in range(productNames.count())]
+                    contacts = page.locator('.detail-contact__item')
+                    
+
+                    for w in range(contacts.count()):
+                        contact = contacts.nth(w)
+                
+                        if(len(contact.inner_text()) > 0):
+                            if (contact.locator('.is-link').count()>0):
+                                website= contact.inner_text()
+                                # print('website')
+                            elif(contact.locator('.social-links').count() > 0):
+                                social = contact.inner_text()
+                                # print('social')
+                            elif( contact.inner_text()[0] == '+'):
+                                phone = contact.inner_text()
+                                # print('phone')
+                            else:
+                                address = contact.inner_text()
+                                # print('address')
+                        else:
+                            pass
+
+                    companyDic.update({company: {'Winery Description': company_description,'Website': website, 
+                                                'Winery Location': address, 'Phone #': phone, 'Trade Show Location':trade_show_location}})
+                    
+                    for k in range(len(product_titles)):
+                        companyDic[company][f"Product {k+1} Name"] = product_titles[k]
+                        companyDic[company][f"Product {k+1} Description"] = product_descriptions[k]
+
+
+                    # 4. RESET STATE - Go back to search
+                    page.goto(url)
+                    page.wait_for_selector("input.search_input", timeout=20000)
+
+            except Exception as e:
+                # notRun = []
+                # notRun.append(name)
+                print(f"Server lag or Error for {name}. Resetting... ({e})")
+                page.goto(url)
+                dismiss_cookie_banner(page)
 
     # Export
     df = pd.DataFrame.from_dict(companyDic, orient="index").reset_index().rename(columns={'index':'Winery Name'})
-    df.to_csv('firabarcelona_results.csv', index=False)
+    df.to_csv('fira_results.csv', index=False)
+    # print(notRun)
+    end = datetime.now()
+    print('Job ended at', end)
+    print('process took', end - start)
     print("Done! File saved.")
