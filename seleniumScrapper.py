@@ -40,11 +40,25 @@ body = soup.find('body')
 #comming soon to theatre
 # soon = soup.find_all('h2', attrs={'class': 'unset', 'data-qa': 'title'})
 divers = soup.find_all(class_='dynamic-poster-list')
+# print(len(divers))
+access = True
 for diver in divers:
+    #fetching class that start with
     header = diver.find(class_= re.compile('dynamic-poster-list__header-container'))
-    print(header.find('h2', attrs={'data-qa':'title'}).text)
-    # print(header.find('h3', attrs={'class_':'p'}))
-    # tilesCarousel = diver.find('tiles-carousel-responsive-item-deprecated')
+    with open('test.csv', '+a') as openfile:
+        title = header.find('h2', attrs={'data-qa':'title'}).text
+        openfile.write(title +'\n')
+        
+    # print(header.find('h2', attrs={'data-qa':'title'}).text)
+
+    tilesCarousel = diver.find_all('tiles-carousel-responsive-item-deprecated')
+    print('Movies Count', len(tilesCarousel))
+
+    for tile in tilesCarousel:
+        with open('test.csv', 'a+') as openfile:
+            tileTitle = tile.find('watchlist-button')['media-title']
+            openfile.write(tileTitle +'\n')
+        # print(tile.find('watchlist-button')['media-title'])
     # print(tilesCarousel.find('button', attrs = {'data-type': 'Movie'}).text)
 # allTiles = tilesCarousel.find_all('tiles-carousel-responsive-item-deprecated')
 # for tile in allTiles:
