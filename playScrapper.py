@@ -136,7 +136,7 @@ with sync_playwright() as p:
         new_page.close()
 
     df = pd.DataFrame.from_dict(links, orient="index").reset_index().rename(columns={'index':'Course Name'})
-    df.to_csv('courses-results.csv', index=False)
+    df.to_csv('courses-result.csv', index=False)
     # for pager in range(pagination.first.count()):
     #     card = pagination.nth(pager)
     #     print(card)
