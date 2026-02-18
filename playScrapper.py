@@ -21,7 +21,7 @@ with sync_playwright() as p:
     links = {}
 
     """card one is disabled and last leads nowhere so we exclude"""
-    for i in range(1, 2, 1):
+    for i in range(1, cards.count()-1, 1):
         card = cards.nth(i)
         newUrl = url+f'?page={i}'
         card.click()
